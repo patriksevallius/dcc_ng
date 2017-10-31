@@ -30,13 +30,10 @@ class CallInstruction(object):
         self.segment = None
 
     def __str__(self):
-        try:
-            if self.segment:
-                return 'call %s %04x:%04x' % (self.segment, self.segment_address, self.offset)
+        if self.segment:
+            return 'call %s %04x:%04x' % (self.segment, self.segment_address, self.offset)
+        return 'call %04x:%04x' % (self.segment_address, self.offset)
 
-            return 'call %04x:%04x' % (self.segment_address, self.offset)
-        except:
-            pass
 
     def __len__(self):
         return 5
