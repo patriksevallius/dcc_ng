@@ -1,0 +1,8 @@
+.idea/
+IDA/
+__pycache__/
+c-version/
+docs/
+game.ovr
+notes.txt
+start.exe
