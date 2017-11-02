@@ -1148,6 +1148,8 @@ class Instruction(object):
             return PopESInstruction()
         elif code == 0xa:
             return OrInstruction(program[offset:offset+5])
+        elif code == 0xb:
+            return OrInstruction(program[offset:offset+5])
         elif code == 0xe:
             return PushCSInstruction()
         elif code == 0x16:
