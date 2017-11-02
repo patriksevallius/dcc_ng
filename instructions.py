@@ -364,14 +364,21 @@ class IntermediateInstruction():
 
     def __str__(self):
         if self.modreg.mod == 0:
-            if self.modreg.rm == 6:
+            if self.modreg.rm == 5:
+                if self.modreg.reg == 7:
+                    return 'cmp [di], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]))
+                else:
+                    raise Exception
+            elif self.modreg.rm == 6:
                 if self.modreg.reg == 1:
                     return 'or %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0], Immediate8(struct.unpack('<B', self.data[3:4])[0]))
                 elif self.modreg.reg == 4:
                     return 'and %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0], Immediate8(struct.unpack('<B', self.data[3:4])[0]))
                 elif self.modreg.reg == 7:
                     return 'cmp %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0], Immediate8(struct.unpack('<B', self.data[3:4])[0]))
-        if self.modreg.mod == 1:
+            else:
+                raise Exception
+        elif self.modreg.mod == 1:
             if self.modreg.rm == 5:
                 if self.modreg.reg == 5:
                     return 'sub %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
@@ -394,7 +401,13 @@ class IntermediateInstruction():
 
     def __len__(self):
         if self.modreg.mod == 0:
-            if self.modreg.rm == 6:
+            if self.modreg.rm == 5:
+                ret = 3
+                if self.src_word:
+                    return ret + 1
+                else:
+                    return ret
+            elif self.modreg.rm == 6:
                 ret = 4
                 if self.src_word:
                     return ret + 2
