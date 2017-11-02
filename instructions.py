@@ -1055,6 +1055,28 @@ class IncBXInstruction(object):
         return 1
 
 
+class IncDIInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'inc di'
+
+    def __len__(self):
+        return 1
+
+
+class DecDXInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'dec dx'
+
+    def __len__(self):
+        return 1
+
+
 class XchgAxCxInstruction(object):
     def __init__(self):
         pass
@@ -1162,6 +1184,10 @@ class Instruction(object):
             return IncAXInstruction()
         elif code == 0x43:
             return IncBXInstruction()
+        elif code == 0x47:
+            return IncDIInstruction()
+        elif code == 0x4a:
+            return DecDXInstruction()
         elif code == 0x57:
             return PushDIInstruction()
         elif 0x50 <= code <= 0x57:
