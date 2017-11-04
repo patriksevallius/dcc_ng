@@ -661,6 +661,17 @@ class MoveDXInstruction():
         return 3
 
 
+class MoveBXInstruction():
+    def __init__(self, data):
+        self.immediate16 = struct.unpack('<H', data)[0]
+
+    def __str__(self):
+        return 'mov bx, %xh' % self.immediate16
+
+    def __len__(self):
+        return 3
+
+
 class MoveDIInstruction():
     def __init__(self, data):
         self.immediate16 = struct.unpack('<H', data)[0]
@@ -1282,6 +1293,8 @@ class Instruction(object):
             return MoveCXInstruction(program[offset+1:offset+3])
         elif code == 0xba:
             return MoveDXInstruction(program[offset+1:offset+3])
+        elif code == 0xbb:
+            return MoveBXInstruction(program[offset+1:offset+3])
         elif code == 0xbe:
             return MoveSIInstruction(program[offset+1:offset+3])
         elif code == 0xbf:
