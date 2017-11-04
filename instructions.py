@@ -39,6 +39,18 @@ class CallInstruction(object):
         return 5
 
 
+class PushfInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'pushf'
+
+
+    def __len__(self):
+        return 1
+
+
 class CallNearInstruction(object):
     def __init__(self, data):
         self.data = data
@@ -1234,6 +1246,8 @@ class Instruction(object):
             return XchgAxCxInstruction()
         elif code == 0x9a:
             return CallInstruction(program[offset+1:offset+5])
+        elif code == 0x9c:
+            return PushfInstruction()
         elif code == 0xa0:
             return MoveAlMem8Instruction(program[offset+1:offset+3])
         elif code == 0xa1:
