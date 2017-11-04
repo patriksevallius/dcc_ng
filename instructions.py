@@ -1352,7 +1352,7 @@ class Instruction(object):
         elif code == 0xff:
             return Grp2Instruction(program[offset:offset+4])
         else:
-            print('%x' %code)
+            print('Unimplemented op-code: %x' %code)
             raise Exception
 
 
