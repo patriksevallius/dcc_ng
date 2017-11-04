@@ -898,6 +898,20 @@ class MovsInstruction(object):
         return 1
 
 
+class CmpsInstruction(object):
+    def __init__(self, word):
+        self.word = word
+
+    def __str__(self):
+        if self.word:
+            return 'cmpsw'
+        else:
+            return 'cmpsb'
+
+    def __len__(self):
+        return 1
+
+
 class InterruptInstruction(object):
     def __init__(self, data):
         self.immediate8 = struct.unpack('<B', data)[0]
@@ -1269,6 +1283,8 @@ class Instruction(object):
             return MoveMem16AxInstruction(program[offset + 1:offset + 3])
         elif code == 0xa4:
             return MovsInstruction(word=False)
+        elif code == 0xa6:
+            return CmpsInstruction(word=False)
         elif code == 0xaa:
             return StosInstruction(word=False)
         elif code == 0xab:
