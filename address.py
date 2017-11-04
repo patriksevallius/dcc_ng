@@ -11,3 +11,6 @@ class Address(object):
             return Address(self.segment, self.offset + other)
         else:
             raise Exception
+
+    def __eq__(self, other):
+        return self.segment == other.segment and self.offset == other.offset
