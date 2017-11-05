@@ -789,8 +789,13 @@ class ShiftInstruction(object):
         self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01)
 
     def __str__(self):
-        if self.modreg.reg == 5:
-            return 'shr %s, cl' % Register(self.modreg.rm, self.modreg.word)
+        if self.modreg.direction == 0:
+            if self.modreg.reg == 4:
+                return 'shl %s, cl' % Register(self.modreg.rm, self.modreg.word)
+            raise Exception
+        elif self.modreg.direction == 2:
+            if self.modreg.reg == 5:
+                return 'shr %s, cl' % Register(self.modreg.rm, self.modreg.word)
         raise Exception
 
     def __len__(self):
@@ -1331,6 +1336,8 @@ class Instruction(object):
             return ReturnInstruction(program[offset+1:offset+3])
         elif code == 0xcd:
             return InterruptInstruction(program[offset+1:offset+2])
+        elif 0xd0 <= code <= 0xd3:
+            return ShiftInstruction(program[offset:offset+5])
         elif code == 0xe2:
             return LoopInstruction(program[offset+1:offset+2])
         elif code == 0xe3:
@@ -1339,8 +1346,6 @@ class Instruction(object):
             return CallNearInstruction(program[offset+1:offset+3])
         elif code == 0xeb:
             return JumpShortInstruction(program[offset+1:offset+2])
-        elif code == 0xd3:
-            return ShiftInstruction(program[offset:offset+3])
         elif code == 0xf3:
             return RepInstruction(Instruction.decode(program, offset+1))
         elif code == 0xf7:
