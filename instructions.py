@@ -1319,6 +1319,8 @@ class Instruction(object):
         elif code == 0xab:
             return StosInstruction(word=True)
         elif code == 0xac:
+            return LodsInstruction(word=False)
+        elif code == 0xad:
             return LodsInstruction(word=True)
         elif code == 0xb0:
             return MoveAlInstruction(program[offset + 1:offset + 2])
