@@ -851,6 +851,28 @@ class NopInstruction(object):
         return 1
 
 
+class CLIInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'cli'
+
+    def __len__(self):
+        return 1
+
+
+class STIInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'sti'
+
+    def __len__(self):
+        return 1
+
+
 class CLDInstruction(object):
     def __init__(self):
         pass
@@ -1352,6 +1374,10 @@ class Instruction(object):
             return RepInstruction(Instruction.decode(program, offset+1))
         elif code == 0xf7:
             return Grp1Instruction(program[offset:offset+5])
+        elif code == 0xfa:
+            return CLIInstruction()
+        elif code == 0xfb:
+            return STIInstruction()
         elif code == 0xfc:
             return CLDInstruction()
         elif code == 0xfe:
