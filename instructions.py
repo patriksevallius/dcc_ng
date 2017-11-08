@@ -68,7 +68,7 @@ class CallNearInstruction(object):
 class JumpShortInstruction(object):
     def __init__(self, data):
         self.data = data
-        self.offset = struct.unpack('<B', self.data)[0]
+        self.offset = struct.unpack('<b', self.data)[0]
 
     def __str__(self):
         return 'jmp %02x' % (self.offset)
