@@ -37,17 +37,20 @@ class ProgramIterator(object):
     def __init__(self, program, address):
         self.program = program
         self.addresses = [address]
+        self.visited = [address]
 
     def __next__(self):
         address = self.addresses.pop()
         instruction = Instruction.decode(self.program, address.segment * 16 + address.offset)
         instruction.address = address
+        self.visited.append(address)
 
         if not (isinstance(instruction, ReturnImm16Instruction) or
                     isinstance(instruction, ReturnInstruction) or
                     isinstance(instruction, ReturnIntraInstruction) or
                     isinstance(instruction, JumpShortInstruction)):
-            self.addresses.append(address + len(instruction))
+            next_address = address + len(instruction)
+            self.addresses.append(next_address)
 
         if isinstance(instruction, CallInstruction):
             address = Address(instruction.segment_address, instruction.offset)
@@ -56,7 +59,7 @@ class ProgramIterator(object):
             address += len(instruction) + instruction.offset
         else:
             address = None
-        if address:
+        if address and address not in self.visited:
             self.addresses.append(address)
 
         return instruction
