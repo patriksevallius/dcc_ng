@@ -1212,9 +1212,7 @@ class Instruction(object):
             return PushESInstruction()
         elif code == 0x7:
             return PopESInstruction()
-        elif code == 0xa:
-            return OrInstruction(program[offset:offset+5])
-        elif code == 0xb:
+        elif 0x8 <= code <= 0xb:
             return OrInstruction(program[offset:offset+5])
         elif code == 0xe:
             return PushCSInstruction()
