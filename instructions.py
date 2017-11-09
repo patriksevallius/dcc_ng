@@ -207,7 +207,9 @@ class ModReg(object):
                 elif self.rm == 6:
                     return '%04Xh, %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, self.word))
             else:
-                if self.rm == 5:
+                if self.rm == 4:
+                    return '%s, [si]' % (Register(self.reg, self.word))
+                elif self.rm == 5:
                     return '%s, [di]' % (Register(self.reg, self.word))
                 elif self.rm == 6:
                     return '%s, %04Xh' % (Register(self.reg, self.word), struct.unpack('<H', self.extra[:2])[0])
