@@ -249,6 +249,9 @@ class ModReg(object):
                 return '%s, %s' % (Register(self.reg, self.word), Register(self.rm, self.word))
         raise Exception
 
+    def __repr__(self):
+        return 'ModReg(mod=%d, reg=%d, rm=%d)' % (self.mod, self.reg, self.rm)
+
     def __len__(self):
         if self.mod == 0:
             if self.rm == 6:
