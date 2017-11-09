@@ -1386,7 +1386,7 @@ class Instruction(object):
         elif code == 0xc3:
             return ReturnIntraInstruction(program[offset:offset+3])
         elif code == 0xc4:
-            return LesInstruction(program[offset:offset+3])
+            return LesInstruction(program[offset:offset+4])
         elif code == 0xc5:
             return LdsInstruction(program[offset:offset+3])
         elif code == 0xc6:
