@@ -34,29 +34,29 @@ class HeaderFactory:
 
 
 class ProgramIterator(object):
-   def __init__(self, program, address):
-       self.program = program
-       self.addresses = [address]
-       
-   def __next__(self):
-       address = self.addresses.pop()
-       instruction = Instruction.decode(self.program, address.segment * 16 + address.offset)
-       instruction.address = address
+    def __init__(self, program, address):
+        self.program = program
+        self.addresses = [address]
 
-       if not (isinstance(instruction, ReturnImm16Instruction) or
-                   isinstance(instruction, ReturnInstruction) or
-                   isinstance(instruction, ReturnIntraInstruction) or
-                   isinstance(instruction, JumpShortInstruction)):
-           self.addresses.append(address+len(instruction))
+    def __next__(self):
+        address = self.addresses.pop()
+        instruction = Instruction.decode(self.program, address.segment * 16 + address.offset)
+        instruction.address = address
 
-       if isinstance(instruction, CallInstruction):
-           self.addresses.append(Address(instruction.segment_address, instruction.offset))
-       elif isinstance(instruction, CallNearInstruction):
-           self.addresses.append(address + (len(instruction) + instruction.offset))
-       elif isinstance(instruction, JumpShortInstruction):
-           self.addresses.append(Address(address.segment, address.offset + len(instruction) + instruction.offset))
+        if not (isinstance(instruction, ReturnImm16Instruction) or
+                    isinstance(instruction, ReturnInstruction) or
+                    isinstance(instruction, ReturnIntraInstruction) or
+                    isinstance(instruction, JumpShortInstruction)):
+            self.addresses.append(address+len(instruction))
 
-       return instruction
+        if isinstance(instruction, CallInstruction):
+            self.addresses.append(Address(instruction.segment_address, instruction.offset))
+        elif isinstance(instruction, CallNearInstruction):
+            self.addresses.append(address + (len(instruction) + instruction.offset))
+        elif isinstance(instruction, JumpShortInstruction):
+            self.addresses.append(Address(address.segment, address.offset + len(instruction) + instruction.offset))
+
+        return instruction
 
 
 class Program(object):
