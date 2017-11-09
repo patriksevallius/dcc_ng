@@ -47,14 +47,17 @@ class ProgramIterator(object):
                     isinstance(instruction, ReturnInstruction) or
                     isinstance(instruction, ReturnIntraInstruction) or
                     isinstance(instruction, JumpShortInstruction)):
-            self.addresses.append(address+len(instruction))
+            self.addresses.append(address + len(instruction))
 
         if isinstance(instruction, CallInstruction):
-            self.addresses.append(Address(instruction.segment_address, instruction.offset))
-        elif isinstance(instruction, CallNearInstruction):
-            self.addresses.append(address + (len(instruction) + instruction.offset))
-        elif isinstance(instruction, JumpShortInstruction):
-            self.addresses.append(Address(address.segment, address.offset + len(instruction) + instruction.offset))
+            address = Address(instruction.segment_address, instruction.offset)
+        elif (isinstance(instruction, CallNearInstruction) or
+                  isinstance(instruction, JumpShortInstruction)):
+            address += len(instruction) + instruction.offset
+        else:
+            address = None
+        if address:
+            self.addresses.append(address)
 
         return instruction
 
