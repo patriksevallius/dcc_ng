@@ -236,7 +236,6 @@ class ModReg(object):
                     return '%s, [bp+%s]' % (Register(self.reg, self.word), Immediate8(struct.unpack('<B', self.extra[:1])[0]))
                 elif self.rm == 7:
                     return '%s, [bx+%s]' % (Register(self.reg, self.word), Immediate8(struct.unpack('<B', self.extra[:1])[0]))
-
         elif self.mod == 2:
             if self.rm == 5:
                 return '%s, [di+%xh]' % (Register(self.reg, 1), struct.unpack('<H', self.extra[:2])[0])
@@ -247,7 +246,7 @@ class ModReg(object):
                 return '%s, %s' % (Register(self.rm, self.word), Register(self.reg, self.word))
             else:
                 return '%s, %s' % (Register(self.reg, self.word), Register(self.rm, self.word))
-        raise Exception
+        raise Exception('Unimplemented', self)
 
     def __repr__(self):
         return 'ModReg(mod=%d, reg=%d, rm=%d)' % (self.mod, self.reg, self.rm)
@@ -389,7 +388,7 @@ class IntermediateInstruction():
                 if self.modreg.reg == 7:
                     return 'cmp [di], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]))
                 else:
-                    raise Exception
+                    raise Exception('Unimplemented', self.modreg)
             elif self.modreg.rm == 6:
                 if self.modreg.reg == 1:
                     return 'or %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0], Immediate8(struct.unpack('<B', self.data[3:4])[0]))
@@ -398,7 +397,7 @@ class IntermediateInstruction():
                 elif self.modreg.reg == 7:
                     return 'cmp %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0], Immediate8(struct.unpack('<B', self.data[3:4])[0]))
             else:
-                raise Exception
+                raise Exception('Unimplemented', self.modreg)
         elif self.modreg.mod == 1:
             if self.modreg.rm == 5:
                 if self.modreg.reg == 5:
@@ -418,7 +417,7 @@ class IntermediateInstruction():
                 return 'sub %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
             elif self.modreg.reg == 7:
                 return 'cmp %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
-        raise Exception
+        raise Exception('Unimplemented', self.modreg)
 
     def __len__(self):
         if self.modreg.mod == 0:
@@ -444,7 +443,7 @@ class IntermediateInstruction():
                 return 4
             else:
                 return 3
-        raise Exception
+        raise Exception('Unimplemented', self.modreg)
 
 
 class LoadEffectiveAddressInstruction():
@@ -805,7 +804,7 @@ class ShiftInstruction(object):
         elif self.modreg.direction == 2:
             if self.modreg.reg == 5:
                 return 'shr %s, cl' % Register(self.modreg.rm, self.modreg.word)
-        raise Exception
+        raise Exception('Unimplemented shift instruction', self.modreg)
 
     def __len__(self):
         return 2
