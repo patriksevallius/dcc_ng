@@ -507,6 +507,18 @@ class PushSSInstruction():
         return 1
 
 
+class SBBInstruction():
+    def __init__(self, data):
+        self.data = data
+        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01)
+
+    def __str__(self):
+        return 'sbb %s' % self.modreg
+
+    def __len__(self):
+        return len(self.modreg)
+
+
 class PushDSInstruction():
     def __str__(self):
         return 'push ds'
@@ -1287,6 +1299,8 @@ class Instruction(object):
             return PushCSInstruction()
         elif code == 0x16:
             return PushSSInstruction()
+        elif code == 0x1b:
+            return SBBInstruction(program[offset:offset+4])
         elif code == 0x1e:
             return PushDSInstruction()
         elif code == 0x1f:
