@@ -855,6 +855,8 @@ class ShiftInstruction(object):
         elif self.modreg.direction == 2:
             if self.modreg.reg == 0:
                 return 'rol %s, cl' % Register(self.modreg.rm, self.modreg.word)
+            elif self.modreg.reg == 1:
+                return 'ror %s, cl' % Register(self.modreg.rm, self.modreg.word)
             elif self.modreg.reg == 5:
                 return 'shr %s, cl' % Register(self.modreg.rm, self.modreg.word)
         raise Exception('Unimplemented shift instruction', self.modreg)
