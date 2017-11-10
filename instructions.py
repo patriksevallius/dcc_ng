@@ -1146,6 +1146,17 @@ class AndALImm8Instruction(object):
         return 2
 
 
+class AndAXImm16Instruction(object):
+    def __init__(self, data):
+        self.immediate16 = struct.unpack('<H', data)[0]
+
+    def __str__(self):
+        return 'and ax, %04Xh' % (self.immediate16)
+
+    def __len__(self):
+        return 2
+
+
 class IncAXInstruction(object):
     def __init__(self):
         pass
@@ -1282,6 +1293,8 @@ class Instruction(object):
             return PopDSInstruction()
         elif code == 0x24:
             return AndALImm8Instruction(program[offset+1:offset+2])
+        elif code == 0x25:
+            return AndAXImm16Instruction(program[offset+1:offset+3])
         elif code == 0x26:
             return ESSegmentOverride(Instruction.decode(program, offset+1))
         elif code == 0x2b:
