@@ -200,6 +200,8 @@ class ModReg(object):
             if self.direction == 0:
                 if self.rm == 1:
                     return '[bx+di], %s' % (Register(self.reg, self.word))
+                if self.rm == 4:
+                    return '[si], %s' % (Register(self.reg, self.word))
                 if self.rm == 5:
                     return '[di], %s' % (Register(self.reg, self.word))
                 elif self.rm == 6:
