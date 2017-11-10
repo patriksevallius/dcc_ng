@@ -1226,6 +1226,17 @@ class IncBXInstruction(object):
         return 1
 
 
+class IncSIInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'inc si'
+
+    def __len__(self):
+        return 1
+
+
 class IncDIInstruction(object):
     def __init__(self):
         pass
@@ -1372,6 +1383,8 @@ class Instruction(object):
             return IncCXInstruction()
         elif code == 0x43:
             return IncBXInstruction()
+        elif code == 0x46:
+            return IncSIInstruction()
         elif code == 0x47:
             return IncDIInstruction()
         elif code == 0x4a:
