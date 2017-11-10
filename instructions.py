@@ -809,12 +809,34 @@ class JaInstruction():
         return 2
 
 
+class JlInstruction():
+    def __init__(self, data):
+        self.offset = struct.unpack('B', data)[0]
+
+    def __str__(self):
+        return 'jl %02Xh' % self.offset
+
+    def __len__(self):
+        return 2
+
+
 class JleInstruction():
     def __init__(self, data):
         self.offset = struct.unpack('B', data)[0]
 
     def __str__(self):
         return 'jle %02Xh' % self.offset
+
+    def __len__(self):
+        return 2
+
+
+class JgInstruction():
+    def __init__(self, data):
+        self.offset = struct.unpack('B', data)[0]
+
+    def __str__(self):
+        return 'jg %02Xh' % self.offset
 
     def __len__(self):
         return 2
@@ -1359,8 +1381,12 @@ class Instruction(object):
             return JbeInstruction(program[offset+1:offset+2])
         elif code == 0x77:
             return JaInstruction(program[offset+1:offset+2])
+        elif code == 0x7c:
+            return JlInstruction(program[offset+1:offset+2])
         elif code == 0x7e:
             return JleInstruction(program[offset+1:offset+2])
+        elif code == 0x7f:
+            return JgInstruction(program[offset+1:offset+2])
         elif 0x80 <= code <= 0x83:
             return IntermediateInstruction(program[offset+1:offset+5], code - 0x80)
         elif code == 0x87:
