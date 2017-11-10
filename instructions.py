@@ -1204,6 +1204,17 @@ class IncAXInstruction(object):
         return 1
 
 
+class IncCXInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'inc cx'
+
+    def __len__(self):
+        return 1
+
+
 class IncBXInstruction(object):
     def __init__(self):
         pass
@@ -1357,6 +1368,8 @@ class Instruction(object):
             return PushAXInstruction()
         elif code == 0x40:
             return IncAXInstruction()
+        elif code == 0x41:
+            return IncCXInstruction()
         elif code == 0x43:
             return IncBXInstruction()
         elif code == 0x47:
