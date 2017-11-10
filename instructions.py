@@ -34,7 +34,6 @@ class CallInstruction(object):
             return 'call %s %04x:%04x' % (self.segment, self.segment_address, self.offset)
         return 'call %04x:%04x' % (self.segment_address, self.offset)
 
-
     def __len__(self):
         return 5
 
@@ -45,7 +44,6 @@ class PushfInstruction(object):
 
     def __str__(self):
         return 'pushf'
-
 
     def __len__(self):
         return 1
@@ -169,10 +167,10 @@ class SegmentRegister(object):
 class PushInstruction(object):
     def __init__(self, register):
         self.register = Register(register, word=True)
-    
+
     def __str__(self):
         return 'push %s' % self.register
-    
+
     def __len__(self):
         return 1
 
@@ -180,10 +178,10 @@ class PushInstruction(object):
 class PopInstruction(object):
     def __init__(self, register):
         self.register = Register(register, word=True)
-    
+
     def __str__(self):
         return 'pop %s' % self.register
-    
+
     def __len__(self):
         return 1
 
@@ -192,7 +190,7 @@ class ModReg(object):
     def __init__(self, modreg, direction, word, extra=None):
         self.mod = (modreg & 0xc0) >> 6
         self.reg = (modreg & 0x38) >> 3
-        self.rm = modreg & 0x07 
+        self.rm = modreg & 0x07
         self.direction = direction
         self.word = word
         self.extra = extra
@@ -216,26 +214,34 @@ class ModReg(object):
                 elif self.rm == 6:
                     return '%s, %04Xh' % (Register(self.reg, self.word), struct.unpack('<H', self.extra[:2])[0])
                 elif self.rm == 7:
-                    return '%s, bx' % (Register(self.reg, self.word))
+                    return '%s, bx' % Register(self.reg, self.word)
         elif self.mod == 1:
             if self.direction == 0:
                 if self.rm == 4:
-                    return '[si+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]), Register(self.reg, self.word))
+                    return '[si+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
+                                            Register(self.reg, self.word))
                 elif self.rm == 5:
-                    return '[di+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]), Register(self.reg, self.word))
+                    return '[di+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
+                                            Register(self.reg, self.word))
                 elif self.rm == 6:
-                    return '[bp+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]), Register(self.reg, self.word))
+                    return '[bp+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
+                                            Register(self.reg, self.word))
                 elif self.rm == 7:
-                    return '[bx+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]), Register(self.reg, self.word))
+                    return '[bx+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
+                                            Register(self.reg, self.word))
             else:
                 if self.rm == 4:
-                    return '%s, [si+%s]' % (Register(self.reg, self.word), Immediate8(struct.unpack('<B', self.extra[:1])[0]))
+                    return '%s, [si+%s]' % (Register(self.reg, self.word),
+                                            Immediate8(struct.unpack('<B', self.extra[:1])[0]))
                 elif self.rm == 5:
-                    return '%s, [di+%s]' % (Register(self.reg, self.word), Immediate8(struct.unpack('<B', self.extra[:1])[0]))
+                    return '%s, [di+%s]' % (Register(self.reg, self.word),
+                                            Immediate8(struct.unpack('<B', self.extra[:1])[0]))
                 elif self.rm == 6:
-                    return '%s, [bp+%s]' % (Register(self.reg, self.word), Immediate8(struct.unpack('<B', self.extra[:1])[0]))
+                    return '%s, [bp+%s]' % (Register(self.reg, self.word),
+                                            Immediate8(struct.unpack('<B', self.extra[:1])[0]))
                 elif self.rm == 7:
-                    return '%s, [bx+%s]' % (Register(self.reg, self.word), Immediate8(struct.unpack('<B', self.extra[:1])[0]))
+                    return '%s, [bx+%s]' % (Register(self.reg, self.word),
+                                            Immediate8(struct.unpack('<B', self.extra[:1])[0]))
         elif self.mod == 2:
             if self.rm == 5:
                 return '%s, [di+%xh]' % (Register(self.reg, 1), struct.unpack('<H', self.extra[:2])[0])
@@ -249,7 +255,8 @@ class ModReg(object):
         raise Exception('Unimplemented', self)
 
     def __repr__(self):
-        return 'ModReg(mod=%d, reg=%d, rm=%d)' % (self.mod, self.reg, self.rm)
+        return 'ModReg(mod=%d, reg=%d, rm=%d, direction=%d, word=%s)' %\
+               (self.mod, self.reg, self.rm, self.direction, self.word)
 
     def __len__(self):
         if self.mod == 0:
@@ -265,6 +272,7 @@ class ModReg(object):
             return 2
         raise Exception
 
+
 class ModSr(object):
     def __init__(self, modsr, direction, word, extra=None):
         self.mod = (modsr & 0xc0) >> 6
@@ -278,16 +286,16 @@ class ModSr(object):
         if self.sr > 3:
             raise Exception
         if self.mod == 0:
-             if self.rm == 6:
-                 return '%04xh, %s' % (struct.unpack('<H', self.extra[:2])[0], SegmentRegister(self.sr))
+            if self.rm == 6:
+                return '%04xh, %s' % (struct.unpack('<H', self.extra[:2])[0], SegmentRegister(self.sr))
         elif self.mod == 1:
-            if  self.rm == 5:
+            if self.rm == 5:
                 return 'word ptr [di+%d], %s' % (struct.unpack('<B', self.extra[:1])[0], SegmentRegister(self.sr))
         elif self.mod == 3:
-             if self.direction == 0:
-                 return '%s, %s' % (Register(self.rm, self.word), SegmentRegister(self.sr))
-             else:
-                 return '%s, %s' % (SegmentRegister(self.sr), Register(self.rm, self.word))
+            if self.direction == 0:
+                return '%s, %s' % (Register(self.rm, self.word), SegmentRegister(self.sr))
+            else:
+                return '%s, %s' % (SegmentRegister(self.sr), Register(self.rm, self.word))
         raise Exception
 
     def __len__(self):
@@ -299,11 +307,12 @@ class ModSr(object):
             return 2
         raise Exception
 
+
 class MovInstruction(object):
     def __init__(self, data):
         self.data = data
         self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
-            
+
     def __str__(self):
         return 'mov %s' % self.modreg
 
@@ -336,9 +345,9 @@ class MovMem16Imm16Instruction(object):
             return 'mov %04Xh, %04Xh' % (self.mem16, self.immediate16)
         elif self.modreg.mod == 1:
             if self.modreg.rm == 5:
-                return 'mov [di+%02X], %04Xh' % (struct.unpack('<B', self.data[2:3])[0], struct.unpack('<H', self.data[3:5])[0])
+                return 'mov [di+%02X], %04Xh' % (struct.unpack('<B', self.data[2:3])[0],
+                                                 struct.unpack('<H', self.data[3:5])[0])
         raise Exception
-
 
     def __len__(self):
         if self.modreg.mod == 0:
@@ -352,7 +361,7 @@ class XorInstruction(object):
     def __init__(self, data):
         self.data = data
         self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01)
-            
+
     def __str__(self):
         return 'xor %s' % self.modreg
 
@@ -360,23 +369,23 @@ class XorInstruction(object):
         return 2
 
 
-class IntermediateInstruction():
-    def __init__(self, data, type):
+class IntermediateInstruction:
+    def __init__(self, data, instruction_type):
         self.data = data
-        self.type = type
-        if type == 0:
+        self.type = instruction_type
+        if instruction_type == 0:
             self.src_word = False
             self.dst_word = False
             self.imm = Immediate8(struct.unpack('<B', self.data[1:2])[0])
-        elif type == 1:
+        elif instruction_type == 1:
             self.src_word = True
             self.dst_word = True
             self.imm = Immediate16(struct.unpack('<H', self.data[1:3])[0])
-        elif type == 2:
+        elif instruction_type == 2:
             self.src_word = False
             self.dst_word = False
             self.imm = Immediate8(struct.unpack('<B', self.data[1:2])[0])
-        elif type == 3:
+        elif instruction_type == 3:
             self.src_word = False
             self.dst_word = True
             self.imm = Immediate8(struct.unpack('<B', self.data[1:2])[0])
@@ -391,11 +400,14 @@ class IntermediateInstruction():
                     raise Exception('Unimplemented', self.modreg)
             elif self.modreg.rm == 6:
                 if self.modreg.reg == 1:
-                    return 'or %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0], Immediate8(struct.unpack('<B', self.data[3:4])[0]))
+                    return 'or %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
+                                             Immediate8(struct.unpack('<B', self.data[3:4])[0]))
                 elif self.modreg.reg == 4:
-                    return 'and %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0], Immediate8(struct.unpack('<B', self.data[3:4])[0]))
+                    return 'and %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
+                                              Immediate8(struct.unpack('<B', self.data[3:4])[0]))
                 elif self.modreg.reg == 7:
-                    return 'cmp %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0], Immediate8(struct.unpack('<B', self.data[3:4])[0]))
+                    return 'cmp %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
+                                              Immediate8(struct.unpack('<B', self.data[3:4])[0]))
             else:
                 raise Exception('Unimplemented', self.modreg)
         elif self.modreg.mod == 1:
@@ -403,13 +415,16 @@ class IntermediateInstruction():
                 if self.modreg.reg == 5:
                     return 'sub %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
                 elif self.modreg.reg == 7:
-                    return 'cmp [di+%d], %s' % (struct.unpack('<B', self.data[1:2])[0], Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    return 'cmp [di+%d], %s' % (struct.unpack('<B', self.data[1:2])[0],
+                                                Immediate16(struct.unpack('<H', self.data[2:4])[0]))
             if self.modreg.rm == 6:
                 if self.modreg.reg == 7:
                     if self.src_word:
-                        return 'cmp [bp+%d], %s' % (struct.unpack('<B', self.data[1:2])[0], Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                        return 'cmp [bp+%d], %s' % (struct.unpack('<B', self.data[1:2])[0],
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
                     else:
-                        return 'cmp [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]), Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                        return 'cmp [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
         elif self.modreg.mod == 3:
             if self.modreg.reg == 0:
                 return 'add %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
@@ -1432,7 +1447,5 @@ class Instruction(object):
         elif code == 0xff:
             return Grp2Instruction(program[offset:offset+4])
         else:
-            print('Unimplemented op-code: %x' %code)
+            print('Unimplemented op-code: %x' % code)
             raise Exception
-
-

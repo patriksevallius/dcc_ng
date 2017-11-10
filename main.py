@@ -7,12 +7,12 @@ if __name__ == "__main__":
     header = loader.header
     exe = loader.exe
     print(header)
-##        relocator = Relocator(header)
+#        relocator = Relocator(header)
     exe.seek(header.reloc_table_offset)
     reloc_table = []
     for x in range(0, header.num_relocs):
         (offset, segment) = struct.unpack("<HH", exe.read(4))
-        reloc_table.append((offset,segment))
+        reloc_table.append((offset, segment))
 
     # for x in range(0,header.num_relocs):
     #     print("Reloc %u" % (int(x) + 1))
@@ -22,4 +22,3 @@ if __name__ == "__main__":
     program = loader.load_program()
     for instruction in program:
         print("%s %s" % (instruction.address, instruction))
-
