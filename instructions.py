@@ -1166,7 +1166,7 @@ class OrInstruction(object):
         return 'or %s' % self.modreg
 
     def __len__(self):
-        return 2
+        return len(self.modreg)
 
 
 class AndALImm8Instruction(object):
