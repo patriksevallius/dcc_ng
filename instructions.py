@@ -865,8 +865,8 @@ class ShiftInstruction(object):
     def __str__(self):
         if self.modreg.direction == 0:
             if self.modreg.reg == 4:
-                return 'shl %s, cl' % Register(self.modreg.rm, self.modreg.word)
-            raise Exception
+                return 'shl %s, 1' % Register(self.modreg.rm, self.modreg.word)
+            raise
         elif self.modreg.direction == 2:
             if self.modreg.reg == 0:
                 return 'rol %s, cl' % Register(self.modreg.rm, self.modreg.word)
