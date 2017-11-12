@@ -52,12 +52,15 @@ class ProgramIterator(object):
         if not (isinstance(instruction, ReturnImm16Instruction) or
                 isinstance(instruction, ReturnInstruction) or
                 isinstance(instruction, ReturnIntraInstruction) or
+                isinstance(instruction, JumpLongInstruction) or
                 isinstance(instruction, JumpShortInstruction)):
             next_address = address + len(instruction)
             self.addresses.append(next_address)
 
         if isinstance(instruction, CallInstruction):
             address = Address(instruction.segment_address, instruction.offset)
+        elif isinstance(instruction, JumpLongInstruction):
+            address = Address(instruction.segment, instruction.offset)
         elif (isinstance(instruction, CallNearInstruction) or
               isinstance(instruction, JumpShortInstruction)):
             address += len(instruction) + instruction.offset

@@ -64,6 +64,18 @@ class CallNearInstruction(object):
         return 3
 
 
+class JumpLongInstruction(object):
+    def __init__(self, data):
+        self.data = data
+        (self.offset, self.segment) = struct.unpack('<HH', self.data)
+
+    def __str__(self):
+        return 'jmp %04x:%04x' % (self.segment, self.offset)
+
+    def __len__(self):
+        return 5
+
+
 class JumpShortInstruction(object):
     def __init__(self, data):
         self.data = data
@@ -1512,6 +1524,8 @@ class Instruction(object):
             return JcxzInstruction(program[offset+1:offset+2])
         elif code == 0xe8:
             return CallNearInstruction(program[offset+1:offset+3])
+        elif code == 0xea:
+            return JumpLongInstruction(program[offset+1:offset+5])
         elif code == 0xeb:
             return JumpShortInstruction(program[offset+1:offset+2])
         elif code == 0xf3:
