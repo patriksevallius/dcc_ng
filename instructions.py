@@ -1205,7 +1205,7 @@ class AndAXImm16Instruction(object):
         return 'and ax, %04Xh' % (self.immediate16)
 
     def __len__(self):
-        return 2
+        return 3
 
 
 class IncAXInstruction(object):
