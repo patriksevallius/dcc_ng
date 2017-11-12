@@ -1276,6 +1276,17 @@ class DecDXInstruction(object):
         return 1
 
 
+class DecBXInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'dec bx'
+
+    def __len__(self):
+        return 1
+
+
 class DecSIInstruction(object):
     def __init__(self):
         pass
@@ -1406,6 +1417,8 @@ class Instruction(object):
             return IncDIInstruction()
         elif code == 0x4a:
             return DecDXInstruction()
+        elif code == 0x4b:
+            return DecBXInstruction()
         elif code == 0x4e:
             return DecSIInstruction()
         elif code == 0x57:
