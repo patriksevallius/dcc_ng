@@ -1348,7 +1348,7 @@ class Grp2Instruction(object):
             return 'dec %s' % Register(self.modreg.rm, False)
         elif self.modreg.reg == 6:
             return 'push %s' % Immediate16(struct.unpack('<H', self.modreg.extra[:2])[0])
-        raise Exception
+        raise Exception('Grp2Instruction', self.modreg)
 
     def __len__(self):
         return 2
