@@ -550,22 +550,6 @@ class PopDSInstruction():
         return 1
 
 
-class PushAXInstruction():
-    def __str__(self):
-        return 'push ax'
-
-    def __len__(self):
-        return 1
-
-
-class PushDIInstruction():
-    def __str__(self):
-        return 'push di'
-
-    def __len__(self):
-        return 1
-
-
 class MoveAlInstruction():
     def __init__(self, data):
         self.immediate8 = struct.unpack('<B', data)[0]
@@ -1370,9 +1354,17 @@ class Instruction(object):
     @staticmethod
     def decode(program, offset):
         code = program[offset]
-        if code == 0x3:
+        if code == 0x0:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x1:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x2:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x3:
             return AddInstruction(program[offset:offset+5])
-        if code == 0x5:
+        elif code == 0x4:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x5:
             return AddAxInstruction(program[offset+1:offset+3])
         elif code == 0x6:
             return PushESInstruction()
@@ -1380,32 +1372,90 @@ class Instruction(object):
             return PopESInstruction()
         elif 0x8 <= code <= 0xb:
             return OrInstruction(program[offset:offset+5])
+        elif code == 0xc:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xe:
             return PushCSInstruction()
+        elif code == 0xf:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x10:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x11:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x12:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x13:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x14:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x15:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x16:
             return PushSSInstruction()
+        elif code == 0x17:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x18:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x19:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x1a:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x1b:
             return SBBInstruction(program[offset:offset+4])
+        elif code == 0x1c:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x1d:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x1e:
             return PushDSInstruction()
         elif code == 0x1f:
             return PopDSInstruction()
+        elif code == 0x20:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x21:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x22:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x23:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x24:
             return AndALImm8Instruction(program[offset+1:offset+2])
         elif code == 0x25:
             return AndAXImm16Instruction(program[offset+1:offset+3])
         elif code == 0x26:
             return ESSegmentOverride(Instruction.decode(program, offset+1))
+        elif code == 0x27:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x28:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x29:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x2a:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x2b:
             return SubInstruction(program[offset:offset+6])
+        elif code == 0x2c:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x2d:
             return SubAxImm16Instruction(program[offset+1:offset+3])
         elif code == 0x2e:
             return CSSegmentOverride(Instruction.decode(program, offset+1))
+        elif code == 0x2f:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif 0x30 <= code <= 0x33:
             return XorInstruction(program[offset:offset+5])
+        elif code == 0x34:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x35:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x36:
             return SSSegmentOverride(Instruction.decode(program, offset+1))
+        elif code == 0x37:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x38:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x39:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x3a:
             return CmpInstruction(program[offset:offset+5])
         elif code == 0x3b:
@@ -1414,8 +1464,10 @@ class Instruction(object):
             return CmpAlImm8Instruction(program[offset+1:offset+2])
         elif code == 0x3d:
             return CmpAxImm16Instruction(program[offset+1:offset+3])
-        elif code == 0x50:
-            return PushAXInstruction()
+        elif code == 0x3e:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x3f:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x40:
             return IncAXInstruction()
         elif code == 0x41:
@@ -1424,22 +1476,70 @@ class Instruction(object):
             return IncDXInstruction()
         elif code == 0x43:
             return IncBXInstruction()
+        elif code == 0x44:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x45:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x46:
             return IncSIInstruction()
         elif code == 0x47:
             return IncDIInstruction()
+        elif code == 0x48:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x49:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x4a:
             return DecDXInstruction()
         elif code == 0x4b:
             return DecBXInstruction()
+        elif code == 0x4c:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x4d:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x4e:
             return DecSIInstruction()
-        elif code == 0x57:
-            return PushDIInstruction()
+        elif code == 0x4f:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif 0x50 <= code <= 0x57:
             return PushInstruction(code-0x50)
         elif 0x58 <= code <= 0x5f:
             return PopInstruction(code-0x58)
+        elif code == 0x60:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x61:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x62:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x63:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x64:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x65:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x66:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x67:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x68:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x69:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x6a:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x6b:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x6c:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x6d:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x6e:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x6f:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x70:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x71:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x72:
             return JbInstruction(program[offset+1:offset+2])
         elif code == 0x73:
@@ -1452,14 +1552,30 @@ class Instruction(object):
             return JbeInstruction(program[offset+1:offset+2])
         elif code == 0x77:
             return JaInstruction(program[offset+1:offset+2])
+        elif code == 0x78:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x79:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x7a:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x7b:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x7c:
             return JlInstruction(program[offset+1:offset+2])
+        elif code == 0x7d:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x7e:
             return JleInstruction(program[offset+1:offset+2])
         elif code == 0x7f:
             return JgInstruction(program[offset+1:offset+2])
         elif 0x80 <= code <= 0x83:
             return IntermediateInstruction(program[offset+1:offset+5], code - 0x80)
+        elif code == 0x84:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x85:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x86:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x87:
             return XchgInstruction(program[offset:offset+6])
         elif code == 0x88:
@@ -1476,14 +1592,40 @@ class Instruction(object):
             return LoadEffectiveAddressInstruction(program[offset:offset+6])
         elif code == 0x8e:
             return MoveSegRegInstruction(program[offset:offset+6])
+        elif code == 0x8f:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x90:
             return NopInstruction()
         elif code == 0x91:
             return XchgAxCxInstruction()
+        elif code == 0x92:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x93:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x94:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x95:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x96:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x97:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x98:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x99:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x9a:
             return CallInstruction(program[offset+1:offset+5])
+        elif code == 0x9b:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x9c:
             return PushfInstruction()
+        elif code == 0x9d:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x9e:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0x9f:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xa0:
             return MoveAlMem8Instruction(program[offset+1:offset+3])
         elif code == 0xa1:
@@ -1494,8 +1636,16 @@ class Instruction(object):
             return MoveMem16AxInstruction(program[offset + 1:offset + 3])
         elif code == 0xa4:
             return MovsInstruction(word=False)
+        elif code == 0xa5:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xa6:
             return CmpsInstruction(word=False)
+        elif code == 0xa7:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xa8:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xa9:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xaa:
             return StosInstruction(word=False)
         elif code == 0xab:
@@ -1504,6 +1654,10 @@ class Instruction(object):
             return LodsInstruction(word=False)
         elif code == 0xad:
             return LodsInstruction(word=True)
+        elif code == 0xae:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xaf:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xb0:
             return MoveAlInstruction(program[offset + 1:offset + 2])
         elif code == 0xb1:
@@ -1514,6 +1668,10 @@ class Instruction(object):
             return MoveBLInstruction(program[offset+1:offset+2])
         elif code == 0xb4:
             return MoveAhInstruction(program[offset+1:offset+2])
+        elif code == 0xb5:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xb6:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xb7:
             return MoveBhInstruction(program[offset+1:offset+2])
         elif code == 0xb8:
@@ -1524,10 +1682,20 @@ class Instruction(object):
             return MoveDXInstruction(program[offset+1:offset+3])
         elif code == 0xbb:
             return MoveBXInstruction(program[offset+1:offset+3])
+        elif code == 0xbc:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xbd:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xbe:
             return MoveSIInstruction(program[offset+1:offset+3])
         elif code == 0xbf:
             return MoveDIInstruction(program[offset+1:offset+3])
+        elif code == 0xc0:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xc1:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xc2:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xc3:
             return ReturnIntraInstruction(program[offset:offset+3])
         elif code == 0xc4:
@@ -1538,26 +1706,92 @@ class Instruction(object):
             return MovMem8Imm8Instruction(program[offset+2:offset+6])
         elif code == 0xc7:
             return MovMem16Imm16Instruction(program[offset:offset+6])
+        elif code == 0xc8:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xc9:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xca:
             return ReturnImm16Instruction(program[offset+1:offset+3])
         elif code == 0xcb:
             return ReturnInstruction(program[offset+1:offset+3])
         elif code == 0xcd:
             return InterruptInstruction(program[offset+1:offset+2])
+        elif code == 0xce:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xcf:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif 0xd0 <= code <= 0xd3:
             return ShiftInstruction(program[offset:offset+5])
+        elif code == 0xd4:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xd5:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xd6:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xd7:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xd8:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xd9:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xda:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xdb:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xdc:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xdd:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xde:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xdf:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xe0:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xe1:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xe2:
             return LoopInstruction(program[offset+1:offset+2])
         elif code == 0xe3:
             return JcxzInstruction(program[offset+1:offset+2])
+        elif code == 0xe4:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xe5:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xe6:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xe7:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xe8:
             return CallNearInstruction(program[offset+1:offset+3])
+        elif code == 0xe9:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xea:
             return JumpLongInstruction(program[offset+1:offset+5])
         elif code == 0xeb:
             return JumpShortInstruction(program[offset+1:offset+2])
+        elif code == 0xec:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xed:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xee:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xef:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xf0:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xf1:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xf2:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xf3:
             return RepInstruction(Instruction.decode(program, offset+1))
+        elif code == 0xf4:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xf5:
+            raise Exception('Unimplemented op-code: %x' % code)
+        elif code == 0xf6:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xf7:
             return Grp1Instruction(program[offset:offset+5])
         elif code == 0xf8:
@@ -1570,10 +1804,10 @@ class Instruction(object):
             return STIInstruction()
         elif code == 0xfc:
             return CLDInstruction()
+        elif code == 0xfd:
+            raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xfe:
             return Grp2Instruction(program[offset:offset+4])
         elif code == 0xff:
             return Grp2Instruction(program[offset:offset+4])
-        else:
-            print('Unimplemented op-code: %x' % code)
-            raise Exception
+        raise Exception('Unimplemented op-code: %x' % code)
