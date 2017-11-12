@@ -6,11 +6,11 @@ if __name__ == "__main__":
     loader = Loader("start.exe")
     loader.fetch_header()
     relocator = Relocator(loader)
-    overlay = Overlay("game.ovr")
+    program = loader.load_program()
+    overlay = Overlay("game.ovr", program)
+    overlay.overlay_code()
     header = loader.header
-    exe = loader.exe
     print(header)
 
-    program = loader.load_program()
     for instruction in program:
         print("%s %s" % (instruction.address, instruction))

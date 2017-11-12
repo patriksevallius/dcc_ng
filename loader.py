@@ -71,11 +71,20 @@ class ProgramIterator(object):
 
 class Program(object):
     def __init__(self, exe, size, address):
-        self.program = exe.read(size)
+        self.size = size
+        self.program = bytearray(exe.read(size))
         self.address = address
 
     def __iter__(self):
         return ProgramIterator(self.program, self.address)
+
+    def append_unit(self, unit):
+        adjustment = (16 - (len(self.program) & 0xf)) % 16
+        if adjustment:
+            self.program += bytes(adjustment)
+        unit_address = Address(len(self.program) >> 4, len(self.program) & 0xf)
+        self.program += unit.code
+        return unit_address
 
 
 class Loader:
@@ -83,18 +92,18 @@ class Loader:
         self.exe = io.open(filename, 'rb')
         self.header = None
         self.program = None
+        self.header_size = 0
 
     def fetch_header(self):
         self.header = HeaderFactory(self.exe)
+        if self.header.bytes_in_last_block:
+            self.total_size = (self.header.blocks_in_file - 1) * 512 + self.header.bytes_in_last_block
+        else:
+            self.total_size = self.header.blocks_in_file * 512
+        self.header_size = self.header.header_paragraphs * 16
+        self.program_size = self.total_size - self.header_size
 
     def load_program(self):
-        if self.header.bytes_in_last_block:
-            total_size = (self.header.blocks_in_file - 1) * 512 + self.header.bytes_in_last_block
-        else:
-            total_size = self.header.blocks_in_file * 512
-        header_size = self.header.header_paragraphs * 16
-        program_size = total_size - header_size
-        
-        self.exe.seek(header_size)
-        self.program = Program(self.exe, program_size, Address(0, self.header.ip))
+        self.exe.seek(self.header_size)
+        self.program = Program(self.exe, self.program_size, Address(0, self.header.ip))
         return self.program
