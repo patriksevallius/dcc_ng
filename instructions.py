@@ -52,6 +52,7 @@ class PushfInstruction(object):
 class CallNearInstruction(object):
     def __init__(self, data):
         self.data = data
+        # TODO: can this be replaced with '<h'?
         self.offset = struct.unpack('<H', self.data)[0]
         if self.offset & 0x8000:
             self.offset = -(0x10000 - self.offset)
