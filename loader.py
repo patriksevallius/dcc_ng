@@ -5,34 +5,36 @@ from instructions import *
 
 
 class HeaderFactory:
-    def __init__(self,exe):
+    def __init__(self, exe):
         self.exe = exe
         self.signature = None
         signature = list(self.exe.read(4))
-        if( signature[0] == ord('M') and
-            signature[1] == ord('Z')):
+        if(signature[0] == ord('M') and
+           signature[1] == ord('Z')):
             exe.seek(0)
             exe_header = exe.read(28)
             (self.signature, self.bytes_in_last_block, self.blocks_in_file, self.num_relocs, self.header_paragraphs,
              self.min_extra_paragraphs, self.max_extra_paragraphs, self.ss, self.sp, self.checksum, self.ip, self.cs,
-             self.reloc_table_offset, self.overlay_number ) = struct.unpack('<HHHHHHHHHHHHHH',exe_header)
+             self.reloc_table_offset, self.overlay_number) = struct.unpack('<HHHHHHHHHHHHHH', exe_header)
         else:
             print('signature mismatch')
             print(signature[0], ord('M'))
 
     def __str__(self):
-        return "signature: %x\n" % (self.signature) + "bytes in last block: %u\n" % (self.bytes_in_last_block) +\
-               "blocks in file: %u\n" % (self.blocks_in_file) + "num relocs: %u\n" % (self.num_relocs) +\
-               "header paragraphs: %u\n" % (self.header_paragraphs) +\
-               "min_extra_paragraphs: %u\n" % (self.min_extra_paragraphs) +\
-               "max_extra_paragraphs: %u\n" % (self.max_extra_paragraphs) +\
-               "ss: %04x\n" % (self.ss) +\
-               "sp: %04x\n" % (self.sp) +\
-               "checksum: %04x\n" % (self.checksum) +\
-               "ip: %04x\n" % (self.ip) +\
-               "cs: %04x\n" % (self.cs) +\
-               "reloc table offset: %u\n" % (self.reloc_table_offset) +\
-               "overlay number: %u\n" % (self.overlay_number)
+        return "signature: %x\n" % self.signature +\
+               "bytes in last block: %u\n" % self.bytes_in_last_block +\
+               "blocks in file: %u\n" % self.blocks_in_file +\
+               "num relocs: %u\n" % self.num_relocs +\
+               "header paragraphs: %u\n" % self.header_paragraphs +\
+               "min_extra_paragraphs: %u\n" % self.min_extra_paragraphs +\
+               "max_extra_paragraphs: %u\n" % self.max_extra_paragraphs +\
+               "ss: %04x\n" % self.ss +\
+               "sp: %04x\n" % self.sp +\
+               "checksum: %04x\n" % self.checksum +\
+               "ip: %04x\n" % self.ip +\
+               "cs: %04x\n" % self.cs +\
+               "reloc table offset: %u\n" % self.reloc_table_offset +\
+               "overlay number: %u\n" % self.overlay_number
 
 
 class ProgramIterator(object):
@@ -48,16 +50,16 @@ class ProgramIterator(object):
         self.visited.append(address)
 
         if not (isinstance(instruction, ReturnImm16Instruction) or
-                    isinstance(instruction, ReturnInstruction) or
-                    isinstance(instruction, ReturnIntraInstruction) or
-                    isinstance(instruction, JumpShortInstruction)):
+                isinstance(instruction, ReturnInstruction) or
+                isinstance(instruction, ReturnIntraInstruction) or
+                isinstance(instruction, JumpShortInstruction)):
             next_address = address + len(instruction)
             self.addresses.append(next_address)
 
         if isinstance(instruction, CallInstruction):
             address = Address(instruction.segment_address, instruction.offset)
         elif (isinstance(instruction, CallNearInstruction) or
-                  isinstance(instruction, JumpShortInstruction)):
+              isinstance(instruction, JumpShortInstruction)):
             address += len(instruction) + instruction.offset
         else:
             address = None
@@ -79,12 +81,14 @@ class Program(object):
 class Loader:
     def __init__(self, filename):
         self.exe = io.open(filename, 'rb')
+        self.header = None
+        self.program = None
 
     def fetch_header(self):
         self.header = HeaderFactory(self.exe)
 
     def load_program(self):
-        if( self.header.bytes_in_last_block ):
+        if self.header.bytes_in_last_block:
             total_size = (self.header.blocks_in_file - 1) * 512 + self.header.bytes_in_last_block
         else:
             total_size = self.header.blocks_in_file * 512
@@ -94,4 +98,3 @@ class Loader:
         self.exe.seek(header_size)
         self.program = Program(self.exe, program_size, Address(0, self.header.ip))
         return self.program
-    
