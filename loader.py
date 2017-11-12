@@ -19,7 +19,6 @@ class HeaderFactory:
         else:
             print('signature mismatch')
             print(signature[0], ord('M'))
-        print(self.signature)
 
     def __str__(self):
         return "signature: %x\n" % (self.signature) + "bytes in last block: %u\n" % (self.bytes_in_last_block) +\
@@ -27,9 +26,12 @@ class HeaderFactory:
                "header paragraphs: %u\n" % (self.header_paragraphs) +\
                "min_extra_paragraphs: %u\n" % (self.min_extra_paragraphs) +\
                "max_extra_paragraphs: %u\n" % (self.max_extra_paragraphs) +\
-               "ss: %04x\n" % (self.ss) + "sp: %04x\n" % (self.sp) +\
-               "checksum: %04x\n" % (self.checksum) + "ip: %04x\n" % (self.ip) +\
-               "cs: %04x\n" % (self.cs) + "reloc table offset: %u\n" % (self.reloc_table_offset) +\
+               "ss: %04x\n" % (self.ss) +\
+               "sp: %04x\n" % (self.sp) +\
+               "checksum: %04x\n" % (self.checksum) +\
+               "ip: %04x\n" % (self.ip) +\
+               "cs: %04x\n" % (self.cs) +\
+               "reloc table offset: %u\n" % (self.reloc_table_offset) +\
                "overlay number: %u\n" % (self.overlay_number)
 
 
