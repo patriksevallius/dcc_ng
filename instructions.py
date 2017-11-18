@@ -1335,6 +1335,17 @@ class XchgAxCxInstruction(object):
         return 1
 
 
+class XchgAxDxInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'xchg ax,dx'
+
+    def __len__(self):
+        return 1
+
+
 class NotIstruction(object):
     def __init__(self, modreg):
         self.modreg = modreg
@@ -1721,7 +1732,7 @@ class Instruction(object):
         elif code == 0x91:
             return XchgAxCxInstruction()
         elif code == 0x92:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return XchgAxDxInstruction()
         elif code == 0x93:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x94:
