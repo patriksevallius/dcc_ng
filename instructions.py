@@ -274,7 +274,9 @@ class ModReg(object):
                 return '%s, %s' % (Register(self.rm, self.word), Register(self.reg, self.word))
             elif self.direction == 2:
                 return '%s, %s' % (Register(self.reg, self.word), Register(self.rm, self.word))
-        raise Exception('Unimplemented', self)
+            elif self.direction == 4:
+                return '%s' % Register(self.rm, self.word)
+            raise Exception('Unimplemented', self)
 
     def __repr__(self):
         return 'ModReg(mod=%d, reg=%d, rm=%d, direction=%d, word=%s)' %\
@@ -1322,20 +1324,49 @@ class XchgAxCxInstruction(object):
         return 1
 
 
-class Grp1Instruction(object):
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, word=False)
+class NotIstruction(object):
+    def __init__(self, modreg):
+        self.modreg = modreg
 
     def __str__(self):
-        if self.modreg.reg == 2:
-            return 'not %s' % Register(self.modreg.rm, False)
-        elif self.modreg.reg == 6:
-            return 'div %s' % Register(self.modreg.rm, False)
-        raise Exception('Unimplemented', self.modreg)
+        return 'not %s' % self.modreg
 
     def __len__(self):
-        return 2
+        return len(self.modreg)
+
+
+class DivInstruction(object):
+    def __init__(self, modreg):
+        self.modreg = modreg
+
+    def __str__(self):
+        return 'div %s' % self.modreg
+
+    def __len__(self):
+        return len(self.modreg)
+
+
+class MulInstruction(object):
+    def __init__(self, modreg):
+        self.modreg = modreg
+
+    def __str__(self):
+        return 'mul %s' % self.modreg
+
+    def __len__(self):
+        return len(self.modreg)
+
+
+def Grp1Instruction(data):
+    modreg = ModReg(data[1], 4, data[0] & 0x01, data[2:])
+
+    if modreg.reg == 2:
+        return NotIstruction(modreg)
+    elif modreg.reg == 4:
+        return MulInstruction(modreg)
+    elif modreg.reg == 6:
+        return DivInstruction(modreg)
+    raise Exception('Unimplemented', modreg)
 
 
 class PushMem16Instruction(object):
@@ -1347,29 +1378,29 @@ class PushMem16Instruction(object):
 
     def __len__(self):
         return len(self.modreg)
-#
+
 
 
 class IncInstruction(object):
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, modreg):
+        self.modreg = modreg
 
     def __str__(self):
-        return 'inc %s' % Register(self.data, False)
+        return 'inc %s' % self.modreg
 
     def __len__(self):
-        return 2
+        return len(self.modreg)
 
 
 class DecInstruction(object):
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, modreg):
+        self.modreg = modreg
 
     def __str__(self):
-        return 'dec %s' % Register(self.data, False)
+        return 'dec %s' % self.modreg
 
     def __len__(self):
-        return 2
+        return len(self.modreg)
 
 
 class Grp2CallNearInstruction(CallNearInstruction):
@@ -1382,9 +1413,9 @@ def Grp2Instruction(data):
     modreg = ModReg(data[1], 4, data[0] & 0x01, data[2:])
 
     if modreg.reg == 0:
-        return IncInstruction(modreg.rm)
+        return IncInstruction(modreg)
     elif modreg.reg == 1:
-        return DecInstruction(modreg.rm)
+        return DecInstruction(modreg)
     elif modreg.reg == 3:
         return Grp2CallNearInstruction(modreg.extra)
     elif modreg.reg == 6:
