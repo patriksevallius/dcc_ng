@@ -1357,6 +1357,17 @@ class DivInstruction(object):
         return len(self.modreg)
 
 
+class IdivInstruction(object):
+    def __init__(self, modreg):
+        self.modreg = modreg
+
+    def __str__(self):
+        return 'idiv %s' % self.modreg
+
+    def __len__(self):
+        return len(self.modreg)
+
+
 class MulInstruction(object):
     def __init__(self, modreg):
         self.modreg = modreg
@@ -1377,6 +1388,8 @@ def Grp1Instruction(data):
         return MulInstruction(modreg)
     elif modreg.reg == 6:
         return DivInstruction(modreg)
+    elif modreg.reg == 7:
+        return IdivInstruction(modreg)
     raise Exception('Unimplemented', modreg)
 
 
