@@ -1267,6 +1267,17 @@ class IncDIInstruction(object):
         return 1
 
 
+class DecAXInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'dec ax'
+
+    def __len__(self):
+        return 1
+
+
 class DecDXInstruction(object):
     def __init__(self):
         pass
@@ -1528,7 +1539,7 @@ class Instruction(object):
         elif code == 0x47:
             return IncDIInstruction()
         elif code == 0x48:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return DecAXInstruction()
         elif code == 0x49:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x4a:
