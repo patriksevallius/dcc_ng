@@ -75,6 +75,18 @@ class CallNearInstruction(object):
         return 3
 
 
+class JumpNearInstruction(object):
+    def __init__(self, data):
+        self.data = data
+        (self.offset) = struct.unpack('<h', self.data)[0]
+
+    def __str__(self):
+        return 'jmp %04x' % (self.offset)
+
+    def __len__(self):
+        return 3
+
+
 class JumpLongInstruction(object):
     def __init__(self, data):
         self.data = data
@@ -382,14 +394,21 @@ class MovMem16Imm16Instruction(object):
             if self.modreg.rm == 5:
                 return 'mov [di+%02X], %04Xh' % (struct.unpack('<B', self.data[2:3])[0],
                                                  struct.unpack('<H', self.data[3:5])[0])
-        raise Exception
+        elif self.modreg.mod == 2:
+            if self.modreg.rm == 5:
+                return 'mov [di+%04X], %04Xh' % (struct.unpack('<H', self.data[2:4])[0],
+                                                 struct.unpack('<H', self.data[4:6])[0])
+
+        raise Exception('Unimplemented', self.modreg)
 
     def __len__(self):
         if self.modreg.mod == 0:
             return 6
         elif self.modreg.mod == 1:
             return 5
-        raise Exception
+        elif self.modreg.mod == 2:
+            return 6
+        raise Exception('Unimplemented', self.modreg)
 
 
 class XorInstruction(object):
@@ -1898,7 +1917,7 @@ class Instruction(object):
         elif code == 0xe8:
             return CallNearInstruction(program[offset+1:offset+3])
         elif code == 0xe9:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return JumpNearInstruction(program[offset+1:offset+3])
         elif code == 0xea:
             return JumpLongInstruction(program[offset+1:offset+5])
         elif code == 0xeb:

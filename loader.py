@@ -64,6 +64,7 @@ class ProgramIterator(object):
         elif isinstance(instruction, JumpLongInstruction):
             address = Address(instruction.segment, instruction.offset)
         elif (isinstance(instruction, CallNearInstruction) or
+              isinstance(instruction, JumpNearInstruction) or
               isinstance(instruction, JumpShortInstruction)):
             address += len(instruction) + instruction.offset
         else:
