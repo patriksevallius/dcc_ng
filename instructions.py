@@ -38,6 +38,17 @@ class CallInstruction(object):
         return 5
 
 
+class CwdInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'cwd'
+
+    def __len__(self):
+        return 1
+
+
 class PushfInstruction(object):
     def __init__(self):
         pass
@@ -1698,7 +1709,7 @@ class Instruction(object):
         elif code == 0x98:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x99:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return CwdInstruction()
         elif code == 0x9a:
             return CallInstruction(program[offset+1:offset+5])
         elif code == 0x9b:
