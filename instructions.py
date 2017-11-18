@@ -236,16 +236,16 @@ class ModReg(object):
             if self.direction == 0:
                 if self.rm == 1:
                     return '[bx+di], %s' % (Register(self.reg, self.word))
-                if self.rm == 4:
+                elif self.rm == 4:
                     return '[si], %s' % (Register(self.reg, self.word))
-                if self.rm == 5:
+                elif self.rm == 5:
                     return '[di], %s' % (Register(self.reg, self.word))
                 elif self.rm == 6:
                     return '%04Xh, %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, self.word))
             elif self.direction == 2:
                 if self.rm == 1:
                     return '%s, [bx+di]' % (Register(self.reg, self.word))
-                if self.rm == 4:
+                elif self.rm == 4:
                     return '%s, [si]' % (Register(self.reg, self.word))
                 elif self.rm == 5:
                     return '%s, [di]' % (Register(self.reg, self.word))
