@@ -219,7 +219,7 @@ class ModReg(object):
                     return '[di], %s' % (Register(self.reg, self.word))
                 elif self.rm == 6:
                     return '%04Xh, %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, self.word))
-            else:
+            elif self.direction == 2:
                 if self.rm == 1:
                     return '%s, [bx+di]' % (Register(self.reg, self.word))
                 if self.rm == 4:
@@ -230,6 +230,9 @@ class ModReg(object):
                     return '%s, %04Xh' % (Register(self.reg, self.word), struct.unpack('<H', self.extra[:2])[0])
                 elif self.rm == 7:
                     return '%s, bx' % Register(self.reg, self.word)
+            elif self.direction == 4:
+                if self.rm == 6:
+                    return '%04Xh' % struct.unpack('<H', self.extra[:2])[0]
         elif self.mod == 1:
             if self.direction == 0:
                 if self.rm == 4:
@@ -244,7 +247,7 @@ class ModReg(object):
                 elif self.rm == 7:
                     return '[bx+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
                                             Register(self.reg, self.word))
-            else:
+            elif self.direction == 2:
                 if self.rm == 4:
                     return '%s, [si+%s]' % (Register(self.reg, self.word),
                                             Immediate8(struct.unpack('<B', self.extra[:1])[0]))
@@ -257,6 +260,10 @@ class ModReg(object):
                 elif self.rm == 7:
                     return '%s, [bx+%s]' % (Register(self.reg, self.word),
                                             Immediate8(struct.unpack('<B', self.extra[:1])[0]))
+            elif self.direction == 4:
+                if self.rm == 6:
+                    return '[bp+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+
         elif self.mod == 2:
             if self.rm == 5:
                 return '%s, [di+%xh]' % (Register(self.reg, 1), struct.unpack('<H', self.extra[:2])[0])
@@ -265,7 +272,7 @@ class ModReg(object):
         elif self.mod == 3:
             if self.direction == 0:
                 return '%s, %s' % (Register(self.rm, self.word), Register(self.reg, self.word))
-            else:
+            elif self.direction == 2:
                 return '%s, %s' % (Register(self.reg, self.word), Register(self.rm, self.word))
         raise Exception('Unimplemented', self)
 
@@ -1320,22 +1327,58 @@ class Grp1Instruction(object):
         return 2
 
 
-class Grp2Instruction(object):
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
+class PushMem16Instruction(object):
+    def __init__(self, modreg):
+        self.modreg = modreg
 
     def __str__(self):
-        if self.modreg.reg == 0:
-            return 'inc %s' % Register(self.modreg.rm, False)
-        elif self.modreg.reg == 1:
-            return 'dec %s' % Register(self.modreg.rm, False)
-        elif self.modreg.reg == 6:
-            return 'push %s' % Immediate16(struct.unpack('<H', self.modreg.extra[:2])[0])
-        raise Exception('Grp2Instruction', self.modreg)
+        return 'push %s' % self.modreg
+
+    def __len__(self):
+        return len(self.modreg)
+#
+
+
+class IncInstruction(object):
+    def __init__(self, data):
+        self.data = data
+
+    def __str__(self):
+        return 'inc %s' % Register(self.data, False)
 
     def __len__(self):
         return 2
+
+
+class DecInstruction(object):
+    def __init__(self, data):
+        self.data = data
+
+    def __str__(self):
+        return 'dec %s' % Register(self.data, False)
+
+    def __len__(self):
+        return 2
+
+
+class Grp2CallNearInstruction(CallNearInstruction):
+    def __len__(self):
+        return 4
+
+
+def Grp2Instruction(data):
+    #todo return the correct type of instruction here
+    modreg = ModReg(data[1], 4, data[0] & 0x01, data[2:])
+
+    if modreg.reg == 0:
+        return IncInstruction(modreg.rm)
+    elif modreg.reg == 1:
+        return DecInstruction(modreg.rm)
+    elif modreg.reg == 3:
+        return Grp2CallNearInstruction(modreg.extra)
+    elif modreg.reg == 6:
+        return PushMem16Instruction(modreg)
+    raise Exception('Grp2Instruction', modreg)
 
 
 class XchgInstruction(object):

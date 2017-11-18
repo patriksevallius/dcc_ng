@@ -59,6 +59,8 @@ class ProgramIterator(object):
 
         if isinstance(instruction, CallInstruction):
             address = Address(instruction.segment_address, instruction.offset)
+        elif isinstance(instruction, Grp2CallNearInstruction):
+            address = None
         elif isinstance(instruction, JumpLongInstruction):
             address = Address(instruction.segment, instruction.offset)
         elif (isinstance(instruction, CallNearInstruction) or
