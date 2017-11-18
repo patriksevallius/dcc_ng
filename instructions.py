@@ -1321,7 +1321,7 @@ class Grp1Instruction(object):
             return 'not %s' % Register(self.modreg.rm, False)
         elif self.modreg.reg == 6:
             return 'div %s' % Register(self.modreg.rm, False)
-        raise Exception
+        raise Exception('Unimplemented', self.modreg)
 
     def __len__(self):
         return 2
