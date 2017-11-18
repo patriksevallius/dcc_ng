@@ -1507,7 +1507,7 @@ class Instruction(object):
     def decode(program, offset):
         code = program[offset]
         if code == 0x0:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return AddInstruction(program[offset:offset+5])
         elif code == 0x1:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x2:
