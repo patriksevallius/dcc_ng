@@ -256,6 +256,11 @@ class ModReg(object):
             elif self.direction == 4:
                 if self.rm == 6:
                     return '%04Xh' % struct.unpack('<H', self.extra[:2])[0]
+            elif self.direction == 8:
+                if self.rm == 5:
+                    return '[di], %s' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 6:
+                    return '%04Xh, %s' % (struct.unpack('<H', self.extra[:2])[0], Immediate8(struct.unpack('<B', self.extra[2:3])[0]))
         elif self.mod == 1:
             if self.direction == 0:
                 if self.rm == 4:
@@ -286,6 +291,9 @@ class ModReg(object):
             elif self.direction == 4:
                 if self.rm == 6:
                     return '[bp+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+            elif self.direction == 8:
+                return '[di+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
+                                        Immediate8(struct.unpack('<B', self.extra[1:2])[0]))
 
         elif self.mod == 2:
             if self.rm == 5:
@@ -299,25 +307,38 @@ class ModReg(object):
                 return '%s, %s' % (Register(self.reg, self.word), Register(self.rm, self.word))
             elif self.direction == 4:
                 return '%s' % Register(self.rm, self.word)
-            raise Exception('Unimplemented', self)
+        raise Exception('Unimplemented', self)
 
     def __repr__(self):
         return 'ModReg(mod=%d, reg=%d, rm=%d, direction=%d, word=%s)' %\
                (self.mod, self.reg, self.rm, self.direction, self.word)
 
     def __len__(self):
-        if self.mod == 0:
-            if self.rm == 6:
+        if not self.direction == 8:
+            if self.mod == 0:
+                if self.rm == 6:
+                    return 4
+                else:
+                    return 2
+            elif self.mod == 1:
+                return 3
+            elif self.mod == 2:
                 return 4
-            else:
+            elif self.mod == 3:
                 return 2
-        elif self.mod == 1:
-            return 3
-        elif self.mod == 2:
-            return 4
-        elif self.mod == 3:
-            return 2
-        raise Exception
+        else:
+            if self.mod == 0:
+                if self.rm == 5:
+                    return 3
+                elif self.rm == 6:
+                    return 5
+            elif self.mod == 1:
+                if self.rm == 5:
+                    return 5
+            elif self.mod == 2:
+                if self.rm == 5:
+                    return 5
+        raise Exception('Unimplemented', self)
 
 
 class ModSr(object):
@@ -370,14 +391,13 @@ class MovInstruction(object):
 class MovMem8Imm8Instruction(object):
     def __init__(self, data):
         self.data = data
-        self.mem16 = struct.unpack('<H', self.data[:2])[0]
-        self.immediate8 = struct.unpack('<B', self.data[2:3])[0]
+        self.modreg = ModReg(data[1], 8, data[0] & 0x01, data[2:])
 
     def __str__(self):
-        return 'mov %04Xh, %02Xh' % (self.mem16, self.immediate8)
+        return 'mov %s' % self.modreg
 
     def __len__(self):
-        return 5
+        return len(self.modreg)
 
 
 class MovMem16Imm16Instruction(object):
@@ -1855,7 +1875,7 @@ class Instruction(object):
         elif code == 0xc5:
             return LdsInstruction(program[offset:offset+3])
         elif code == 0xc6:
-            return MovMem8Imm8Instruction(program[offset+2:offset+6])
+            return MovMem8Imm8Instruction(program[offset+0:offset+6])
         elif code == 0xc7:
             return MovMem16Imm16Instruction(program[offset:offset+6])
         elif code == 0xc8:
