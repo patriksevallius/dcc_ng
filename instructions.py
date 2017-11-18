@@ -1379,6 +1379,17 @@ class MulInstruction(object):
         return len(self.modreg)
 
 
+class ImulInstruction(object):
+    def __init__(self, modreg):
+        self.modreg = modreg
+
+    def __str__(self):
+        return 'imul %s' % self.modreg
+
+    def __len__(self):
+        return len(self.modreg)
+
+
 def Grp1Instruction(data):
     modreg = ModReg(data[1], 4, data[0] & 0x01, data[2:])
 
@@ -1386,6 +1397,8 @@ def Grp1Instruction(data):
         return NotIstruction(modreg)
     elif modreg.reg == 4:
         return MulInstruction(modreg)
+    elif modreg.reg == 5:
+        return ImulInstruction(modreg)
     elif modreg.reg == 6:
         return DivInstruction(modreg)
     elif modreg.reg == 7:
