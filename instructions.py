@@ -1416,6 +1416,17 @@ class DecBXInstruction(object):
         return 1
 
 
+class DecBPInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'dec bp'
+
+    def __len__(self):
+        return 1
+
+
 class DecSIInstruction(object):
     def __init__(self):
         pass
@@ -1742,7 +1753,7 @@ class Instruction(object):
         elif code == 0x4c:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x4d:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return DecBPInstruction()
         elif code == 0x4e:
             return DecSIInstruction()
         elif code == 0x4f:
