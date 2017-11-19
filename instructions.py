@@ -271,17 +271,27 @@ class ModReg(object):
                     return '[bx+si], %s' % (Register(self.reg, self.word))
                 elif self.rm == 1:
                     return '[bx+di], %s' % (Register(self.reg, self.word))
+                elif self.rm == 2:
+                    return '[bp+si], %s' % (Register(self.reg, self.word))
+                elif self.rm == 3:
+                    return '[bp+di], %s' % (Register(self.reg, self.word))
                 elif self.rm == 4:
                     return '[si], %s' % (Register(self.reg, self.word))
                 elif self.rm == 5:
                     return '[di], %s' % (Register(self.reg, self.word))
                 elif self.rm == 6:
                     return '%04Xh, %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, self.word))
+                elif self.rm == 7:
+                    return '[bx], %s' % (Register(self.reg, self.word))
             elif self.direction == 2:
                 if self.rm == 0:
                     return '%s, [bx+si]' % (Register(self.reg, self.word))
                 elif self.rm == 1:
                     return '%s, [bx+di]' % (Register(self.reg, self.word))
+                elif self.rm == 2:
+                    return '%s, [bp+si]' % (Register(self.reg, self.word))
+                elif self.rm == 3:
+                    return '%s, [bp+di]' % (Register(self.reg, self.word))
                 elif self.rm == 4:
                     return '%s, [si]' % (Register(self.reg, self.word))
                 elif self.rm == 5:
@@ -291,15 +301,39 @@ class ModReg(object):
                 elif self.rm == 7:
                     return '%s, bx' % Register(self.reg, self.word)
             elif self.direction == 4:
-                if self.rm == 5:
+                if self.rm == 0:
+                    return '[bx+si]'
+                elif self.rm == 1:
+                    return '[bx+di]'
+                elif self.rm == 2:
+                    return '[bp+si]'
+                elif self.rm == 3:
+                    return '[bp+di]'
+                elif self.rm == 4:
+                    return '[si]'
+                elif self.rm == 5:
                     return '[di]'
                 elif self.rm == 6:
                     return '%04Xh' % struct.unpack('<H', self.extra[:2])[0]
+                elif self.rm == 7:
+                    return '[bx]'
             elif self.direction == 8:
-                if self.rm == 5:
+                if self.rm == 0:
+                    return '[bx+si], %s' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 1:
+                    return '[bx+di], %s' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 2:
+                    return '[bp+si], %s' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 3:
+                    return '[bp+di], %s' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 4:
+                    return '[si], %s' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 5:
                     return '[di], %s' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
                 elif self.rm == 6:
                     return '%04Xh, %s' % (struct.unpack('<H', self.extra[:2])[0], Immediate8(struct.unpack('<B', self.extra[2:3])[0]))
+                elif self.rm == 7:
+                    return '[bx], %s' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
         elif self.mod == 1:
             if self.direction == 0:
                 if self.rm == 4:
