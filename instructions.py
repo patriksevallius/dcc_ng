@@ -373,10 +373,22 @@ class ModReg(object):
                     return '%s, [bx+%s]' % (Register(self.reg, self.word),
                                             Immediate8(struct.unpack('<B', self.extra[:1])[0]))
             elif self.direction == 4:
-                if self.rm == 5:
+                if self.rm == 0:
+                    return '[bx+si+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 1:
+                    return '[bx+di+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 2:
+                    return '[bp+si+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 3:
+                    return '[bp+si+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 4:
+                    return '[si+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 5:
                     return '[di+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
                 elif self.rm == 6:
                     return '[bp+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 7:
+                    return '[bx+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
             elif self.direction == 8:
                 if self.rm == 3:
                     return '[bp+di+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
