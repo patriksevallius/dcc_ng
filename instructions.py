@@ -1462,6 +1462,17 @@ class DecSIInstruction(object):
         return 1
 
 
+class DecDIInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'dec di'
+
+    def __len__(self):
+        return 1
+
+
 class XchgAxCxInstruction(object):
     def __init__(self):
         pass
@@ -1781,7 +1792,7 @@ class Instruction(object):
         elif code == 0x4e:
             return DecSIInstruction()
         elif code == 0x4f:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return DecDIInstruction()
         elif 0x50 <= code <= 0x57:
             return PushInstruction(code-0x50)
         elif 0x58 <= code <= 0x5f:
