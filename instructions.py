@@ -685,7 +685,41 @@ class IntermediateInstruction:
                     return 'cmp %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
                                               Immediate8(struct.unpack('<B', self.data[3:4])[0]))
         elif self.modreg.mod == 1:
-            if self.modreg.rm == 2:
+            if self.modreg.rm == 0:
+                if self.modreg.reg == 0:
+                    return 'add [bx+si], %s' % self.imm
+                elif self.modreg.reg == 1:
+                    return 'or [bx+si], %s' % self.imm
+                elif self.modreg.reg == 2:
+                    return 'adc [bx+si], %s' % self.imm
+                elif self.modreg.reg == 3:
+                    return 'sbb [bx+si], %s' % self.imm
+                elif self.modreg.reg == 4:
+                    return 'and [bx+si], %s' % self.imm
+                elif self.modreg.reg == 5:
+                    return 'sub [bx+si], %s' % self.imm
+                elif self.modreg.reg == 6:
+                    return 'xor [bx+si], %s' % self.imm
+                elif self.modreg.reg == 7:
+                    return 'cmp [bx+si], %s' % self.imm
+            elif self.modreg.rm == 1:
+                if self.modreg.reg == 0:
+                    return 'add [bx+di], %s' % self.imm
+                elif self.modreg.reg == 1:
+                    return 'or [bx+di], %s' % self.imm
+                elif self.modreg.reg == 2:
+                    return 'adc [bx+di], %s' % self.imm
+                elif self.modreg.reg == 3:
+                    return 'sbb [bx+di], %s' % self.imm
+                elif self.modreg.reg == 4:
+                    return 'and [bx+di], %s' % self.imm
+                elif self.modreg.reg == 5:
+                    return 'sub [bx+di], %s' % self.imm
+                elif self.modreg.reg == 6:
+                    return 'xor [bx+di], %s' % self.imm
+                elif self.modreg.reg == 7:
+                    return 'cmp [bx+di], %s' % self.imm
+            elif self.modreg.rm == 2:
                 if self.modreg.reg == 0:
                     return 'add [bp+si], %s' % self.imm
                 elif self.modreg.reg == 1:
@@ -702,9 +736,55 @@ class IntermediateInstruction:
                     return 'xor [bp+si], %s' % self.imm
                 elif self.modreg.reg == 7:
                     return 'cmp [bp+si], %s' % self.imm
+            elif self.modreg.rm == 3:
+                if self.modreg.reg == 0:
+                    return 'add [bp+di], %s' % self.imm
+                elif self.modreg.reg == 1:
+                    return 'or [bp+di], %s' % self.imm
+                elif self.modreg.reg == 2:
+                    return 'adc [bp+di], %s' % self.imm
+                elif self.modreg.reg == 3:
+                    return 'sbb [bp+di], %s' % self.imm
+                elif self.modreg.reg == 4:
+                    return 'and [bp+di], %s' % self.imm
+                elif self.modreg.reg == 5:
+                    return 'sub [bp+di], %s' % self.imm
+                elif self.modreg.reg == 6:
+                    return 'xor [bp+di], %s' % self.imm
+                elif self.modreg.reg == 7:
+                    return 'cmp [bp+di], %s' % self.imm
+            elif self.modreg.rm == 4:
+                if self.modreg.reg == 0:
+                    return 'add [si], %s' % self.imm
+                elif self.modreg.reg == 1:
+                    return 'or [si], %s' % self.imm
+                elif self.modreg.reg == 2:
+                    return 'adc [si], %s' % self.imm
+                elif self.modreg.reg == 3:
+                    return 'sbb [si], %s' % self.imm
+                elif self.modreg.reg == 4:
+                    return 'and [si], %s' % self.imm
+                elif self.modreg.reg == 5:
+                    return 'sub [si], %s' % self.imm
+                elif self.modreg.reg == 6:
+                    return 'xor [si], %s' % self.imm
+                elif self.modreg.reg == 7:
+                    return 'cmp [si], %s' % self.imm
             elif self.modreg.rm == 5:
-                if self.modreg.reg == 5:
+                if self.modreg.reg == 0:
+                    return 'add %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
+                elif self.modreg.reg == 1:
+                    return 'or %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
+                elif self.modreg.reg == 2:
+                    return 'adc %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
+                elif self.modreg.reg == 3:
+                    return 'sbb %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
+                elif self.modreg.reg == 4:
+                    return 'and %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
+                elif self.modreg.reg == 5:
                     return 'sub %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
+                elif self.modreg.reg == 6:
+                    return 'xor %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
                 elif self.modreg.reg == 7:
                     return 'cmp [di+%d], %s' % (struct.unpack('<B', self.data[1:2])[0],
                                                 Immediate16(struct.unpack('<H', self.data[2:4])[0]))
