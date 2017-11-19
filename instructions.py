@@ -133,6 +133,14 @@ class JumpShortInstruction(object):
         return 2
 
 
+class OutAlDxInstruction(object):
+    def __str__(self):
+        return 'out al, dx'
+
+    def __len__(self):
+        return 1
+
+
 class AddAxInstruction(object):
     def __init__(self, data):
         self.immediate16 = struct.unpack('<H', data)[0]
@@ -615,19 +623,19 @@ class IntermediateInstruction:
                                              Immediate8(struct.unpack('<B', self.data[3:4])[0]))
                 elif self.modreg.reg == 2:
                     return 'adc %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
-                                             Immediate8(struct.unpack('<B', self.data[3:4])[0]))
+                                              Immediate8(struct.unpack('<B', self.data[3:4])[0]))
                 elif self.modreg.reg == 3:
                     return 'sbb %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
-                                             Immediate8(struct.unpack('<B', self.data[3:4])[0]))
+                                              Immediate8(struct.unpack('<B', self.data[3:4])[0]))
                 elif self.modreg.reg == 4:
                     return 'and %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
                                               Immediate8(struct.unpack('<B', self.data[3:4])[0]))
                 elif self.modreg.reg == 5:
                     return 'sub %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
-                                           Immediate8(struct.unpack('<B', self.data[3:4])[0]))
+                                              Immediate8(struct.unpack('<B', self.data[3:4])[0]))
                 elif self.modreg.reg == 6:
                     return 'xor %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
-                                           Immediate8(struct.unpack('<B', self.data[3:4])[0]))
+                                              Immediate8(struct.unpack('<B', self.data[3:4])[0]))
                 elif self.modreg.reg == 7:
                     return 'cmp %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
                                               Immediate8(struct.unpack('<B', self.data[3:4])[0]))
@@ -2332,7 +2340,7 @@ class Instruction(object):
         elif code == 0xed:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xee:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return OutAlDxInstruction()
         elif code == 0xef:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xf0:
