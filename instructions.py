@@ -60,6 +60,17 @@ class PushfInstruction(object):
         return 1
 
 
+class PopfInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'pophf'
+
+    def __len__(self):
+        return 1
+
+
 class CallNearInstruction(object):
     def __init__(self, data):
         self.data = data
@@ -1879,7 +1890,7 @@ class Instruction(object):
         elif code == 0x9c:
             return PushfInstruction()
         elif code == 0x9d:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return PopfInstruction()
         elif code == 0x9e:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x9f:
