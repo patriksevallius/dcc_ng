@@ -309,7 +309,7 @@ class ModReg(object):
                     return '%s, [bp-%xh]' % (Register(self.reg, 1), 0x10000-struct.unpack('<H', self.extra[:2])[0])
             elif self.direction == 8:
                 if self.rm == 5:
-                    return '[di+%xh]' % (struct.unpack('<H', self.extra[:2])[0])
+                    return 'byte ptr [di+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Immediate8(struct.unpack('<B', self.extra[2:3])[0]))
         elif self.mod == 3:
             if self.direction == 0:
                 return '%s, %s' % (Register(self.rm, self.word), Register(self.reg, self.word))
