@@ -294,12 +294,22 @@ class ModReg(object):
             elif self.direction == 8:
                 return '[di+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
                                         Immediate8(struct.unpack('<B', self.extra[1:2])[0]))
-
         elif self.mod == 2:
-            if self.rm == 5:
-                return '%s, [di+%xh]' % (Register(self.reg, 1), struct.unpack('<H', self.extra[:2])[0])
-            elif self.rm == 6:
-                return '%s, [bp-%xh]' % (Register(self.reg, 1), 0x10000-struct.unpack('<H', self.extra[:2])[0])
+            if self.direction == 0:
+                if self.rm == 5:
+                    return '[di+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
+                elif self.rm == 6:
+                    return '[bp-%xh], %s' % (0x10000 - struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
+            elif self.direction == 2:
+                if self.rm == 3:
+                    return '%s, [bp+di+%xh]' % (Register(self.reg, 1), struct.unpack('<h', self.extra[:2])[0])
+                elif self.rm == 5:
+                    return '%s, [di+%xh]' % (Register(self.reg, 1), struct.unpack('<H', self.extra[:2])[0])
+                elif self.rm == 6:
+                    return '%s, [bp-%xh]' % (Register(self.reg, 1), 0x10000-struct.unpack('<H', self.extra[:2])[0])
+            elif self.direction == 8:
+                if self.rm == 5:
+                    return '[di+%xh]' % (struct.unpack('<H', self.extra[:2])[0])
         elif self.mod == 3:
             if self.direction == 0:
                 return '%s, %s' % (Register(self.rm, self.word), Register(self.reg, self.word))
@@ -1963,7 +1973,7 @@ class Instruction(object):
         elif code == 0xf5:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xf6:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return Grp1Instruction(program[offset:offset+5])
         elif code == 0xf7:
             return Grp1Instruction(program[offset:offset+5])
         elif code == 0xf8:
