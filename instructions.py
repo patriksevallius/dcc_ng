@@ -708,6 +708,28 @@ class SBBInstruction():
         return len(self.modreg)
 
 
+class SBBAlImm8Instruction():
+    def __init__(self, data):
+        self.immediate8 = struct.unpack('<B', data)[0]
+
+    def __str__(self):
+        return 'sbb al, %02Xh' % (self.immediate8)
+
+    def __len__(self):
+        return 2
+
+
+class SBBAxImm16Instruction():
+    def __init__(self, data):
+        self.immediate16 = struct.unpack('<H', data)[0]
+
+    def __str__(self):
+        return 'sbb ax, %04Xh' % (self.immediate16)
+
+    def __len__(self):
+        return 3
+
+
 class PushDSInstruction():
     def __str__(self):
         return 'push ds'
@@ -1412,7 +1434,7 @@ class AndALImm8Instruction(object):
         self.immediate8 = struct.unpack('<B', data)[0]
 
     def __str__(self):
-        return 'and ax, %02Xh' % (self.immediate8)
+        return 'and al, %02Xh' % (self.immediate8)
 
     def __len__(self):
         return 2
@@ -1834,9 +1856,9 @@ class Instruction(object):
         elif code == 0x1b:
             return SBBInstruction(program[offset:offset+4])
         elif code == 0x1c:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return SBBAlImm8Instruction(program[offset+1:offset+2])
         elif code == 0x1d:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return SBBAxImm16Instruction(program[offset+1:offset+3])
         elif code == 0x1e:
             return PushDSInstruction()
         elif code == 0x1f:
