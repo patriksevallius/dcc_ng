@@ -10,6 +10,9 @@ class Immediate8(object):
             return '%d' % self.immediate8
         return '%02Xh' % self.immediate8
 
+    def __len__(self):
+        return 1
+
 
 class Immediate16(object):
     def __init__(self, immediate16):
@@ -21,6 +24,9 @@ class Immediate16(object):
         elif self.immediate16 < 256:
             return '%02Xh' % self.immediate16
         return '%04Xh' % self.immediate16
+
+    def __len__(self):
+        return 2
 
 
 class CallInstruction(object):
@@ -1856,7 +1862,33 @@ class CMCInstruction(object):
         return 1
 
 
-class NotIstruction(object):
+class NotInstruction(object):
+    def __init__(self, modreg):
+        self.modreg = modreg
+
+    def __str__(self):
+        return 'not %s' % self.modreg
+
+    def __len__(self):
+        return len(self.modreg)
+
+
+class TestImmInstruction(object):
+    def __init__(self, modreg):
+        self.modreg = modreg
+        if self.modreg.word:
+            self.imm = Immediate16(struct.unpack('<H', self.modreg.extra[:2])[0])
+        else:
+            self.imm = Immediate8(struct.unpack('<B', self.modreg.extra[:1])[0])
+
+    def __str__(self):
+        return 'not %s, %s' % (self.modreg, self.imm)
+
+    def __len__(self):
+        return len(self.modreg) + len(self.imm)
+
+
+class NegInstruction(object):
     def __init__(self, modreg):
         self.modreg = modreg
 
@@ -1914,8 +1946,12 @@ class ImulInstruction(object):
 def Grp1Instruction(data):
     modreg = ModReg(data[1], 4, data[0] & 0x01, data[2:])
 
-    if modreg.reg == 2:
-        return NotIstruction(modreg)
+    if modreg.reg == 0:
+        return TestImmInstruction(modreg)
+    elif modreg.reg == 2:
+        return NotInstruction(modreg)
+    elif modreg.reg == 3:
+        return NegInstruction(modreg)
     elif modreg.reg == 4:
         return MulInstruction(modreg)
     elif modreg.reg == 5:
