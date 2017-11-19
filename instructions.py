@@ -1122,6 +1122,28 @@ class MoveAhInstruction():
         return 2
 
 
+class MoveChInstruction():
+    def __init__(self, data):
+        self.immediate8 = struct.unpack('<B', data)[0]
+
+    def __str__(self):
+        return 'mov ch, %02Xh' % self.immediate8
+
+    def __len__(self):
+        return 2
+
+
+class MoveDhInstruction():
+    def __init__(self, data):
+        self.immediate8 = struct.unpack('<B', data)[0]
+
+    def __str__(self):
+        return 'mov dh, %02Xh' % self.immediate8
+
+    def __len__(self):
+        return 2
+
+
 class MoveBhInstruction():
     def __init__(self, data):
         self.immediate8 = struct.unpack('<B', data)[0]
@@ -2569,9 +2591,9 @@ class Instruction(object):
         elif code == 0xb4:
             return MoveAhInstruction(program[offset+1:offset+2])
         elif code == 0xb5:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return MoveChInstruction(program[offset+1:offset+2])
         elif code == 0xb6:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return MoveDhInstruction(program[offset+1:offset+2])
         elif code == 0xb7:
             return MoveBhInstruction(program[offset+1:offset+2])
         elif code == 0xb8:
