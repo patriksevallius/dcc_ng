@@ -1955,13 +1955,7 @@ class Instruction(object):
             return PushCSInstruction()
         elif code == 0xf:
             raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x10:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x11:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x12:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x13:
+        elif 0x10 <= code <= 0x13:
             return AdcInstruction(program[offset:offset+4])
         elif code == 0x14:
             raise Exception('Unimplemented op-code: %x' % code)
