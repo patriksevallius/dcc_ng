@@ -1307,6 +1307,14 @@ class ESSegmentOverride(object):
         return len(self.instruction) + 1
 
 
+class DAAInstruction():
+    def __str__(self):
+        return 'daa'
+
+    def __len__(self):
+        return 1
+
+
 class CSSegmentOverride(object):
     def __init__(self, instruction):
         self.instruction = instruction
@@ -2115,7 +2123,7 @@ class Instruction(object):
         elif code == 0x26:
             return ESSegmentOverride(Instruction.decode(program, offset+1))
         elif code == 0x27:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return DAAInstruction()
         elif 0x28 <= code <= 0x2b:
             return SubInstruction(program[offset:offset+5])
         elif code == 0x2c:
