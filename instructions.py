@@ -591,6 +591,18 @@ class PushCSInstruction():
         return 1
 
 
+class AdcInstruction():
+    def __init__(self, data):
+        self.data = data
+        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
+
+    def __str__(self):
+        return 'adc %s' % self.modreg
+
+    def __len__(self):
+        return len(self.modreg)
+
+
 class PushSSInstruction():
     def __str__(self):
         return 'push ss'
@@ -1586,7 +1598,7 @@ class Instruction(object):
         elif code == 0x12:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x13:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return AdcInstruction(program[offset:offset+4])
         elif code == 0x14:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x15:
