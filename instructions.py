@@ -518,6 +518,8 @@ class IntermediateInstruction:
         elif self.modreg.mod == 3:
             if self.modreg.reg == 0:
                 return 'add %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
+            elif self.modreg.reg == 2:
+                return 'adc %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
             elif self.modreg.reg == 4:
                 return 'and %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
             elif self.modreg.reg == 5:
