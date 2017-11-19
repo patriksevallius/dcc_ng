@@ -685,7 +685,24 @@ class IntermediateInstruction:
                     return 'cmp %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
                                               Immediate8(struct.unpack('<B', self.data[3:4])[0]))
         elif self.modreg.mod == 1:
-            if self.modreg.rm == 5:
+            if self.modreg.rm == 2:
+                if self.modreg.reg == 0:
+                    return 'add [bp+si], %s' % self.imm
+                elif self.modreg.reg == 1:
+                    return 'or [bp+si], %s' % self.imm
+                elif self.modreg.reg == 2:
+                    return 'adc [bp+si], %s' % self.imm
+                elif self.modreg.reg == 3:
+                    return 'sbb [bp+si], %s' % self.imm
+                elif self.modreg.reg == 4:
+                    return 'and [bp+si], %s' % self.imm
+                elif self.modreg.reg == 5:
+                    return 'sub [bp+si], %s' % self.imm
+                elif self.modreg.reg == 6:
+                    return 'xor [bp+si], %s' % self.imm
+                elif self.modreg.reg == 7:
+                    return 'cmp [bp+si], %s' % self.imm
+            elif self.modreg.rm == 5:
                 if self.modreg.reg == 5:
                     return 'sub %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
                 elif self.modreg.reg == 7:
