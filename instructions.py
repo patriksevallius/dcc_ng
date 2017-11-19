@@ -571,6 +571,9 @@ class MovMem16Imm16Instruction(object):
             if self.modreg.rm == 5:
                 return 'mov [di+%02X], %04Xh' % (struct.unpack('<b', self.data[2:3])[0],
                                                  struct.unpack('<H', self.data[3:5])[0])
+            elif self.modreg.rm == 6:
+                return 'mov [bp+%02X], %04Xh' % (struct.unpack('<b', self.data[2:3])[0],
+                                                 struct.unpack('<H', self.data[3:5])[0])
         elif self.modreg.mod == 2:
             if self.modreg.rm == 5:
                 return 'mov [di+%04X], %04Xh' % (struct.unpack('<h', self.data[2:4])[0],
@@ -1564,6 +1567,18 @@ class CmpAxImm16Instruction(object):
         return 3
 
 
+class DSSegmentOverride(object):
+    def __init__(self, instruction):
+        self.instruction = instruction
+        self.instruction.segment = 'ds'
+
+    def __str__(self):
+        return str(self.instruction)
+
+    def __len__(self):
+        return len(self.instruction) + 1
+
+
 class ReturnImm16Instruction(object):
     def __init__(self, data):
         self.immediate16 = struct.unpack('<H', data)[0]
@@ -2134,7 +2149,7 @@ class Instruction(object):
         elif code == 0x3d:
             return CmpAxImm16Instruction(program[offset+1:offset+3])
         elif code == 0x3e:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return DSSegmentOverride(Instruction.decode(program, offset+1))
         elif code == 0x3f:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x40:
