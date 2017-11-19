@@ -1721,13 +1721,7 @@ class Instruction(object):
     @staticmethod
     def decode(program, offset):
         code = program[offset]
-        if code == 0x0:
-            return AddInstruction(program[offset:offset+5])
-        elif code == 0x1:
-            return AddInstruction(program[offset:offset+5])
-        elif code == 0x2:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x3:
+        if 0x0 <= code <= 0x3:
             return AddInstruction(program[offset:offset+5])
         elif code == 0x4:
             raise Exception('Unimplemented op-code: %x' % code)
