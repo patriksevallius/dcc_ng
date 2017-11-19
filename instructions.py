@@ -1484,6 +1484,28 @@ class IncSIInstruction(object):
         return 1
 
 
+class IncSPInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'inc sp'
+
+    def __len__(self):
+        return 1
+
+
+class IncBPInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'inc bp'
+
+    def __len__(self):
+        return 1
+
+
 class IncDIInstruction(object):
     def __init__(self):
         pass
@@ -1506,6 +1528,17 @@ class DecAXInstruction(object):
         return 1
 
 
+class DecCXInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'dec cx'
+
+    def __len__(self):
+        return 1
+
+
 class DecDXInstruction(object):
     def __init__(self):
         pass
@@ -1523,6 +1556,17 @@ class DecBXInstruction(object):
 
     def __str__(self):
         return 'dec bx'
+
+    def __len__(self):
+        return 1
+
+
+class DecSPInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'dec sp'
 
     def __len__(self):
         return 1
@@ -1852,9 +1896,9 @@ class Instruction(object):
         elif code == 0x43:
             return IncBXInstruction()
         elif code == 0x44:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return IncSPInstruction()
         elif code == 0x45:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return IncBPInstruction()
         elif code == 0x46:
             return IncSIInstruction()
         elif code == 0x47:
@@ -1862,13 +1906,13 @@ class Instruction(object):
         elif code == 0x48:
             return DecAXInstruction()
         elif code == 0x49:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return DecCXInstruction()
         elif code == 0x4a:
             return DecDXInstruction()
         elif code == 0x4b:
             return DecBXInstruction()
         elif code == 0x4c:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return DecSPInstruction()
         elif code == 0x4d:
             return DecBPInstruction()
         elif code == 0x4e:
