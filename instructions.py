@@ -1646,6 +1646,18 @@ def Grp2Instruction(data):
     raise Exception('Grp2Instruction', modreg)
 
 
+class TestInstruction():
+    def __init__(self, data):
+        self.data = data
+        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, extra=data[2:])
+
+    def __str__(self):
+        return 'test %s' % self.modreg
+
+    def __len__(self):
+        return len(self.modreg)
+
+
 class XchgInstruction(object):
     def __init__(self, data):
         self.data = data
@@ -1879,9 +1891,9 @@ class Instruction(object):
         elif 0x80 <= code <= 0x83:
             return IntermediateInstruction(program[offset+1:offset+5], code - 0x80)
         elif code == 0x84:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return TestInstruction(program[offset:offset+5])
         elif code == 0x85:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return TestInstruction(program[offset:offset+5])
         elif code == 0x86:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x87:
