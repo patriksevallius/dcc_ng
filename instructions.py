@@ -2156,7 +2156,7 @@ class Instruction(object):
         elif code == 0x85:
             return TestInstruction(program[offset:offset+5])
         elif code == 0x86:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return XchgInstruction(program[offset:offset+6])
         elif code == 0x87:
             return XchgInstruction(program[offset:offset+6])
         elif code == 0x88:
