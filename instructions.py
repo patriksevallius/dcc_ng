@@ -1449,6 +1449,17 @@ class XchgAxDxInstruction(object):
         return 1
 
 
+class CMCInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'cmc'
+
+    def __len__(self):
+        return 1
+
+
 class NotIstruction(object):
     def __init__(self, modreg):
         self.modreg = modreg
@@ -2025,7 +2036,7 @@ class Instruction(object):
         elif code == 0xf4:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xf5:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return CMCInstruction()
         elif code == 0xf6:
             return Grp1Instruction(program[offset:offset+5])
         elif code == 0xf7:
