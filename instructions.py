@@ -2121,6 +2121,61 @@ class XchgAxDxInstruction(object):
         return 1
 
 
+class XchgAxBxInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'xchg ax,bx'
+
+    def __len__(self):
+        return 1
+
+
+class XchgAxSpInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'xchg ax,sp'
+
+    def __len__(self):
+        return 1
+
+
+class XchgAxBpInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'xchg ax,bp'
+
+    def __len__(self):
+        return 1
+
+
+class XchgAxSiInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'xchg ax,si'
+
+    def __len__(self):
+        return 1
+
+
+class XchgAxDiInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'xchg ax,di'
+
+    def __len__(self):
+        return 1
+
+
 class CMCInstruction(object):
     def __init__(self):
         pass
@@ -2534,15 +2589,15 @@ class Instruction(object):
         elif code == 0x92:
             return XchgAxDxInstruction()
         elif code == 0x93:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return XchgAxBxInstruction()
         elif code == 0x94:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return XchgAxSpInstruction()
         elif code == 0x95:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return XchgAxBpInstruction()
         elif code == 0x96:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return XchgAxSiInstruction()
         elif code == 0x97:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return XchgAxDiInstruction()
         elif code == 0x98:
             return CbwInstruction()
         elif code == 0x99:
