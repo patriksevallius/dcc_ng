@@ -757,6 +757,28 @@ class AdcInstruction():
         return len(self.modreg)
 
 
+class AdcAlImm8Instruction():
+    def __init__(self, data):
+        self.immediate8 = struct.unpack('<B', data)[0]
+
+    def __str__(self):
+        return 'adc al, %02Xh' % (self.immediate8)
+
+    def __len__(self):
+        return 2
+
+
+class AdcAxImm16Instruction():
+    def __init__(self, data):
+        self.immediate16 = struct.unpack('<H', data)[0]
+
+    def __str__(self):
+        return 'adc ax, %04Xh' % (self.immediate16)
+
+    def __len__(self):
+        return 3
+
+
 class PushSSInstruction():
     def __str__(self):
         return 'push ss'
@@ -1958,9 +1980,9 @@ class Instruction(object):
         elif 0x10 <= code <= 0x13:
             return AdcInstruction(program[offset:offset+4])
         elif code == 0x14:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return AdcAlImm8Instruction(program[offset+1:offset+2])
         elif code == 0x15:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return AdcAxImm16Instruction(program[offset+1:offset+3])
         elif code == 0x16:
             return PushSSInstruction()
         elif code == 0x17:
