@@ -350,7 +350,19 @@ class ModReg(object):
                     return '[bx], %s' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
         elif self.mod == 1:
             if self.direction == 0:
-                if self.rm == 4:
+                if self.rm == 0:
+                    return '[bx+si+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
+                                               Register(self.reg, self.word))
+                elif self.rm == 1:
+                    return '[bx+di+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
+                                               Register(self.reg, self.word))
+                elif self.rm == 2:
+                    return '[bp+si+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
+                                               Register(self.reg, self.word))
+                elif self.rm == 3:
+                    return '[bp+di+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
+                                               Register(self.reg, self.word))
+                elif self.rm == 4:
                     return '[si+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
                                             Register(self.reg, self.word))
                 elif self.rm == 5:
