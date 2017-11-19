@@ -397,28 +397,33 @@ class ModSr(object):
 
     def __str__(self):
         if self.sr > 3:
-            raise Exception
+            raise Exception('Invalid sr', self.sr)
         if self.mod == 0:
             if self.rm == 6:
                 return '%04xh, %s' % (struct.unpack('<H', self.extra[:2])[0], SegmentRegister(self.sr))
         elif self.mod == 1:
             if self.rm == 5:
-                return 'word ptr [di+%d], %s' % (struct.unpack('<B', self.extra[:1])[0], SegmentRegister(self.sr))
+                return 'word ptr [di+%d], %s' % (struct.unpack('<b', self.extra[:1])[0], SegmentRegister(self.sr))
+        elif self.mod == 2:
+            if self.sr == 0:
+                return 'word ptr [bx+si+%d], %s' % (struct.unpack('<h', self.extra[:2])[0], SegmentRegister(self.sr))
         elif self.mod == 3:
             if self.direction == 0:
                 return '%s, %s' % (Register(self.rm, self.word), SegmentRegister(self.sr))
             else:
                 return '%s, %s' % (SegmentRegister(self.sr), Register(self.rm, self.word))
-        raise Exception
+        raise Exception('Unimplemented', self.mod, self.sr)
 
     def __len__(self):
         if self.mod == 0:
             return 4
         elif self.mod == 1:
             return 3
+        elif self.mod == 2:
+            return 4
         elif self.mod == 3:
             return 2
-        raise Exception
+        raise Exception('Unimplemented', self.mod)
 
 
 class MovInstruction(object):
