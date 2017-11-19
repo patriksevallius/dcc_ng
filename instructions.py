@@ -592,15 +592,42 @@ class IntermediateInstruction:
             if self.modreg.rm == 5:
                 if self.modreg.reg == 0:
                     return 'add [di], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]))
+                elif self.modreg.reg == 1:
+                    return 'or [di], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]))
+                elif self.modreg.reg == 2:
+                    return 'adc [di], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]))
+                elif self.modreg.reg == 3:
+                    return 'sbb [di], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]))
+                elif self.modreg.reg == 4:
+                    return 'and [di], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]))
+                elif self.modreg.reg == 5:
+                    return 'sub [di], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]))
+                elif self.modreg.reg == 6:
+                    return 'xor [di], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]))
                 elif self.modreg.reg == 7:
                     return 'cmp [di], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]))
             elif self.modreg.rm == 6:
-                if self.modreg.reg == 1:
+                if self.modreg.reg == 0:
+                    return 'add %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
+                                              Immediate8(struct.unpack('<B', self.data[3:4])[0]))
+                elif self.modreg.reg == 1:
                     return 'or %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
+                                             Immediate8(struct.unpack('<B', self.data[3:4])[0]))
+                elif self.modreg.reg == 2:
+                    return 'adc %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
+                                             Immediate8(struct.unpack('<B', self.data[3:4])[0]))
+                elif self.modreg.reg == 3:
+                    return 'sbb %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
                                              Immediate8(struct.unpack('<B', self.data[3:4])[0]))
                 elif self.modreg.reg == 4:
                     return 'and %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
                                               Immediate8(struct.unpack('<B', self.data[3:4])[0]))
+                elif self.modreg.reg == 5:
+                    return 'sub %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
+                                           Immediate8(struct.unpack('<B', self.data[3:4])[0]))
+                elif self.modreg.reg == 6:
+                    return 'xor %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
+                                           Immediate8(struct.unpack('<B', self.data[3:4])[0]))
                 elif self.modreg.reg == 7:
                     return 'cmp %04Xh, %s' % (struct.unpack('<H', self.data[1:3])[0],
                                               Immediate8(struct.unpack('<B', self.data[3:4])[0]))
