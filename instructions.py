@@ -289,11 +289,14 @@ class ModReg(object):
                     return '%s, [bx+%s]' % (Register(self.reg, self.word),
                                             Immediate8(struct.unpack('<B', self.extra[:1])[0]))
             elif self.direction == 4:
-                if self.rm == 6:
+                if self.rm == 5:
+                    return '[di+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
+                elif self.rm == 6:
                     return '[bp+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
             elif self.direction == 8:
-                return '[di+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
-                                        Immediate8(struct.unpack('<B', self.extra[1:2])[0]))
+                if self.rm == 5:
+                    return '[di+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
+                                            Immediate8(struct.unpack('<B', self.extra[1:2])[0]))
         elif self.mod == 2:
             if self.direction == 0:
                 if self.rm == 5:
