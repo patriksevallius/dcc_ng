@@ -265,7 +265,9 @@ class ModReg(object):
                 elif self.rm == 7:
                     return '%s, bx' % Register(self.reg, self.word)
             elif self.direction == 4:
-                if self.rm == 6:
+                if self.rm == 5:
+                    return '[di]'
+                elif self.rm == 6:
                     return '%04Xh' % struct.unpack('<H', self.extra[:2])[0]
             elif self.direction == 8:
                 if self.rm == 5:
