@@ -1591,6 +1591,28 @@ class OrInstruction(object):
         return len(self.modreg)
 
 
+class OrAlImm8Instruction():
+    def __init__(self, data):
+        self.immediate8 = struct.unpack('<B', data)[0]
+
+    def __str__(self):
+        return 'or al, %02Xh' % (self.immediate8)
+
+    def __len__(self):
+        return 2
+
+
+class OrAxImm16Instruction():
+    def __init__(self, data):
+        self.immediate16 = struct.unpack('<H', data)[0]
+
+    def __str__(self):
+        return 'or ax, %04Xh' % (self.immediate16)
+
+    def __len__(self):
+        return 3
+
+
 class AndALImm8Instruction(object):
     def __init__(self, data):
         self.immediate8 = struct.unpack('<B', data)[0]
@@ -1988,7 +2010,9 @@ class Instruction(object):
         elif 0x8 <= code <= 0xb:
             return OrInstruction(program[offset:offset+5])
         elif code == 0xc:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return OrAlImm8Instruction(program[offset+1:offset+2])
+        elif code == 0xd:
+            return OrAxImm16Instruction(program[offset+1:offset+3])
         elif code == 0xe:
             return PushCSInstruction()
         elif code == 0xf:
