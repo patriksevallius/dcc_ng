@@ -970,9 +970,11 @@ class ShiftInstruction(object):
 
     def __str__(self):
         if self.modreg.direction == 0:
-            if self.modreg.reg == 4:
+            if self.modreg.reg == 2:
+                return 'rcl %s, 1' % Register(self.modreg.rm, self.modreg.word)
+            elif self.modreg.reg == 4:
                 return 'shl %s, 1' % Register(self.modreg.rm, self.modreg.word)
-            if self.modreg.reg == 5:
+            elif self.modreg.reg == 5:
                 return 'shr %s, 1' % Register(self.modreg.rm, self.modreg.word)
         elif self.modreg.direction == 2:
             if self.modreg.reg == 0:
