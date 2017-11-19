@@ -1291,6 +1291,17 @@ class MoveDIInstruction():
         return 3
 
 
+class MoveSPInstruction():
+    def __init__(self, data):
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
+
+    def __str__(self):
+        return 'mov sp, %s' % self.immediate16
+
+    def __len__(self):
+        return 3
+
+
 class MoveBPInstruction():
     def __init__(self, data):
         self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
@@ -2605,7 +2616,7 @@ class Instruction(object):
         elif code == 0xbb:
             return MoveBXInstruction(program[offset+1:offset+3])
         elif code == 0xbc:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return MoveSPInstruction(program[offset+1:offset+3])
         elif code == 0xbd:
             return MoveBPInstruction(program[offset+1:offset+3])
         elif code == 0xbe:
