@@ -321,7 +321,10 @@ class ModReg(object):
                 elif self.rm == 6:
                     return '[bp+%s]' % Immediate8(struct.unpack('<B', self.extra[:1])[0])
             elif self.direction == 8:
-                if self.rm == 5:
+                if self.rm == 3:
+                    return '[bp+di+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
+                                            Immediate8(struct.unpack('<B', self.extra[1:2])[0]))
+                elif self.rm == 5:
                     return '[di+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
                                             Immediate8(struct.unpack('<B', self.extra[1:2])[0]))
                 elif self.rm == 6:
@@ -334,7 +337,9 @@ class ModReg(object):
                 elif self.rm == 6:
                     return '[bp-%xh], %s' % (0x10000 - struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
             elif self.direction == 2:
-                if self.rm == 3:
+                if self.rm == 2:
+                    return '%s, [bp+si+%xh]' % (Register(self.reg, 1), struct.unpack('<h', self.extra[:2])[0])
+                elif self.rm == 3:
                     return '%s, [bp+di+%xh]' % (Register(self.reg, 1), struct.unpack('<h', self.extra[:2])[0])
                 elif self.rm == 5:
                     return '%s, [di+%xh]' % (Register(self.reg, 1), struct.unpack('<H', self.extra[:2])[0])
@@ -348,6 +353,8 @@ class ModReg(object):
             elif self.direction == 8:
                 if self.rm == 5:
                     return 'byte ptr [di+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Immediate8(struct.unpack('<B', self.extra[2:3])[0]))
+                elif self.rm == 6:
+                    return 'byte ptr [bp+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Immediate8(struct.unpack('<B', self.extra[2:3])[0]))
         elif self.mod == 3:
             if self.direction == 0:
                 return '%s, %s' % (Register(self.rm, self.word), Register(self.reg, self.word))
@@ -381,12 +388,16 @@ class ModReg(object):
                 elif self.rm == 6:
                     return 5
             elif self.mod == 1:
+                if self.rm == 3:
+                    return 5
                 if self.rm == 5:
                     return 5
                 elif self.rm == 6:
                     return 4
             elif self.mod == 2:
                 if self.rm == 5:
+                    return 5
+                elif self.rm == 6:
                     return 5
         raise Exception('Unimplemented', self)
 
