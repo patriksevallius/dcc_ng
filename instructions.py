@@ -401,10 +401,22 @@ class ModReg(object):
                                             Immediate8(struct.unpack('<B', self.extra[1:2])[0]))
         elif self.mod == 2:
             if self.direction == 0:
-                if self.rm == 5:
+                if self.rm == 0:
+                    return '[bx+si+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
+                elif self.rm == 1:
+                    return '[bx+di+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
+                elif self.rm == 2:
+                    return '[bp+si+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
+                elif self.rm == 3:
+                    return '[bp+si+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
+                elif self.rm == 4:
+                    return '[si+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
+                elif self.rm == 5:
                     return '[di+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
                 elif self.rm == 6:
                     return '[bp-%xh], %s' % (0x10000 - struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
+                elif self.rm == 7:
+                    return '[bx+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
             elif self.direction == 2:
                 if self.rm == 2:
                     return '%s, [bp+si+%xh]' % (Register(self.reg, 1), struct.unpack('<h', self.extra[:2])[0])
