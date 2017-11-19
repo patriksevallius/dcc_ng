@@ -1115,6 +1115,17 @@ class CLDInstruction(object):
         return 1
 
 
+class STDInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'std'
+
+    def __len__(self):
+        return 1
+
+
 class LodsInstruction(object):
     def __init__(self, word):
         self.word = word
@@ -2098,7 +2109,7 @@ class Instruction(object):
         elif code == 0xfc:
             return CLDInstruction()
         elif code == 0xfd:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return STDInstruction()
         elif code == 0xfe:
             return Grp2Instruction(program[offset:offset+4])
         elif code == 0xff:
