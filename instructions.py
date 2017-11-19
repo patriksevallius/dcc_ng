@@ -686,6 +686,18 @@ class PopDSInstruction():
         return 1
 
 
+class AndInstruction(object):
+    def __init__(self, data):
+        self.data = data
+        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
+
+    def __str__(self):
+        return 'and %s' % (self.modreg)
+
+    def __len__(self):
+        return len(self.modreg)
+
+
 class MoveAlInstruction():
     def __init__(self, data):
         self.immediate8 = struct.unpack('<B', data)[0]
@@ -1753,14 +1765,8 @@ class Instruction(object):
             return PushDSInstruction()
         elif code == 0x1f:
             return PopDSInstruction()
-        elif code == 0x20:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x21:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x22:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x23:
-            raise Exception('Unimplemented op-code: %x' % code)
+        elif 0x20 <= code <= 0x23:
+            return AndInstruction(program[offset:offset+5])
         elif code == 0x24:
             return AndALImm8Instruction(program[offset+1:offset+2])
         elif code == 0x25:
@@ -1776,7 +1782,7 @@ class Instruction(object):
         elif code == 0x2a:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x2b:
-            return SubInstruction(program[offset:offset+6])
+            return SubInstruction(program[offset:offset+5])
         elif code == 0x2c:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x2d:
