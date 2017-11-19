@@ -1519,23 +1519,35 @@ class ShiftInstruction(object):
 
     def __str__(self):
         if self.modreg.direction == 0:
-            if self.modreg.reg == 2:
+            if self.modreg.reg == 0:
+                return 'rol %s, 1' % Register(self.modreg.rm, self.modreg.word)
+            elif self.modreg.reg == 1:
+                return 'ror %s, 1' % Register(self.modreg.rm, self.modreg.word)
+            elif self.modreg.reg == 2:
                 return 'rcl %s, 1' % Register(self.modreg.rm, self.modreg.word)
+            elif self.modreg.reg == 3:
+                return 'rcr %s, 1' % Register(self.modreg.rm, self.modreg.word)
             elif self.modreg.reg == 4:
                 return 'shl %s, 1' % Register(self.modreg.rm, self.modreg.word)
             elif self.modreg.reg == 5:
                 return 'shr %s, 1' % Register(self.modreg.rm, self.modreg.word)
+            elif self.modreg.reg == 7:
+                return 'sar %s, 1' % Register(self.modreg.rm, self.modreg.word)
         elif self.modreg.direction == 2:
             if self.modreg.reg == 0:
                 return 'rol %s, cl' % Register(self.modreg.rm, self.modreg.word)
             elif self.modreg.reg == 1:
                 return 'ror %s, cl' % Register(self.modreg.rm, self.modreg.word)
+            elif self.modreg.reg == 2:
+                return 'rcl %s, cl' % Register(self.modreg.rm, self.modreg.word)
             elif self.modreg.reg == 3:
                 return 'rcr %s, cl' % Register(self.modreg.rm, self.modreg.word)
             elif self.modreg.reg == 4:
                 return 'shl %s, cl' % Register(self.modreg.rm, self.modreg.word)
             elif self.modreg.reg == 5:
                 return 'shr %s, cl' % Register(self.modreg.rm, self.modreg.word)
+            elif self.modreg.reg == 7:
+                return 'sar %s, cl' % Register(self.modreg.rm, self.modreg.word)
         raise Exception('Unimplemented shift instruction', self.modreg)
 
     def __len__(self):
