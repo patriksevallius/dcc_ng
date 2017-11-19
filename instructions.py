@@ -2116,13 +2116,7 @@ class Instruction(object):
             return PushSSInstruction()
         elif code == 0x17:
             raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x18:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x19:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x1a:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x1b:
+        elif 0x18 <= code <= 0x1b:
             return SBBInstruction(program[offset:offset+4])
         elif code == 0x1c:
             return SBBAlImm8Instruction(program[offset+1:offset+2])
