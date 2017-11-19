@@ -808,6 +808,17 @@ class MoveDIInstruction():
         return 3
 
 
+class MoveBPInstruction():
+    def __init__(self, data):
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
+
+    def __str__(self):
+        return 'mov bp, %s' % self.immediate16
+
+    def __len__(self):
+        return 3
+
+
 class MoveSIInstruction():
     def __init__(self, data):
         self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
@@ -963,7 +974,6 @@ class ShiftInstruction(object):
                 return 'shl %s, 1' % Register(self.modreg.rm, self.modreg.word)
             if self.modreg.reg == 5:
                 return 'shr %s, 1' % Register(self.modreg.rm, self.modreg.word)
-            raise Exception('Unimplemented shift instruction', self.modreg)
         elif self.modreg.direction == 2:
             if self.modreg.reg == 0:
                 return 'rol %s, cl' % Register(self.modreg.rm, self.modreg.word)
@@ -1909,7 +1919,7 @@ class Instruction(object):
         elif code == 0xbc:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0xbd:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return MoveBPInstruction(program[offset+1:offset+3])
         elif code == 0xbe:
             return MoveSIInstruction(program[offset+1:offset+3])
         elif code == 0xbf:
