@@ -38,6 +38,17 @@ class CallInstruction(object):
         return 5
 
 
+class CbwInstruction(object):
+    def __init__(self):
+        pass
+
+    def __str__(self):
+        return 'cbw'
+
+    def __len__(self):
+        return 1
+
+
 class CwdInstruction(object):
     def __init__(self):
         pass
@@ -1882,7 +1893,7 @@ class Instruction(object):
         elif code == 0x97:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x98:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return CbwInstruction()
         elif code == 0x99:
             return CwdInstruction()
         elif code == 0x9a:
