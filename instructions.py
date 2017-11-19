@@ -961,6 +961,28 @@ class MoveSegRegInstruction():
         return len(self.modsr)
 
 
+class JoInstruction():
+    def __init__(self, data):
+        self.offset = struct.unpack('B', data)[0]
+
+    def __str__(self):
+        return 'jo %02Xh' % self.offset
+
+    def __len__(self):
+        return 2
+
+
+class JnoInstruction():
+    def __init__(self, data):
+        self.offset = struct.unpack('B', data)[0]
+
+    def __str__(self):
+        return 'jno %02Xh' % self.offset
+
+    def __len__(self):
+        return 2
+
+
 class JbInstruction():
     def __init__(self, data):
         self.offset = struct.unpack('B', data)[0]
@@ -1027,12 +1049,45 @@ class JaInstruction():
         return 2
 
 
+class JsInstruction():
+    def __init__(self, data):
+        self.offset = struct.unpack('B', data)[0]
+
+    def __str__(self):
+        return 'js %02Xh' % self.offset
+
+    def __len__(self):
+        return 2
+
+
 class JnsInstruction():
     def __init__(self, data):
         self.offset = struct.unpack('B', data)[0]
 
     def __str__(self):
         return 'jns %02Xh' % self.offset
+
+    def __len__(self):
+        return 2
+
+
+class JpeInstruction():
+    def __init__(self, data):
+        self.offset = struct.unpack('B', data)[0]
+
+    def __str__(self):
+        return 'jpe %02Xh' % self.offset
+
+    def __len__(self):
+        return 2
+
+
+class JpoInstruction():
+    def __init__(self, data):
+        self.offset = struct.unpack('B', data)[0]
+
+    def __str__(self):
+        return 'jpo %02Xh' % self.offset
 
     def __len__(self):
         return 2
@@ -1978,9 +2033,9 @@ class Instruction(object):
         elif code == 0x6f:
             raise Exception('Unimplemented op-code: %x' % code)
         elif code == 0x70:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return JoInstruction(program[offset+1:offset+2])
         elif code == 0x71:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return JnoInstruction(program[offset+1:offset+2])
         elif code == 0x72:
             return JbInstruction(program[offset+1:offset+2])
         elif code == 0x73:
@@ -1994,13 +2049,13 @@ class Instruction(object):
         elif code == 0x77:
             return JaInstruction(program[offset+1:offset+2])
         elif code == 0x78:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return JsInstruction(program[offset+1:offset+2])
         elif code == 0x79:
             return JnsInstruction(program[offset+1:offset+2])
         elif code == 0x7a:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return JpeInstruction(program[offset+1:offset+2])
         elif code == 0x7b:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return JpoInstruction(program[offset+1:offset+2])
         elif code == 0x7c:
             return JlInstruction(program[offset+1:offset+2])
         elif code == 0x7d:
