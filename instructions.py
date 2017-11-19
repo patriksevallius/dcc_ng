@@ -297,6 +297,9 @@ class ModReg(object):
                 if self.rm == 5:
                     return '[di+%s], %s' % (Immediate8(struct.unpack('<B', self.extra[:1])[0]),
                                             Immediate8(struct.unpack('<B', self.extra[1:2])[0]))
+                elif self.rm == 6:
+                    return '[bp+%s], %s' % (Immediate8(struct.unpack('<b', self.extra[:1])[0]),
+                                            Immediate8(struct.unpack('<B', self.extra[1:2])[0]))
         elif self.mod == 2:
             if self.direction == 0:
                 if self.rm == 5:
@@ -348,6 +351,8 @@ class ModReg(object):
             elif self.mod == 1:
                 if self.rm == 5:
                     return 5
+                elif self.rm == 6:
+                    return 4
             elif self.mod == 2:
                 if self.rm == 5:
                     return 5
