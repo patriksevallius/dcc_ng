@@ -267,7 +267,9 @@ class ModReg(object):
     def __str__(self):
         if self.mod == 0:
             if self.direction == 0:
-                if self.rm == 1:
+                if self.rm == 0:
+                    return '[bx+si], %s' % (Register(self.reg, self.word))
+                elif self.rm == 1:
                     return '[bx+di], %s' % (Register(self.reg, self.word))
                 elif self.rm == 4:
                     return '[si], %s' % (Register(self.reg, self.word))
@@ -276,7 +278,9 @@ class ModReg(object):
                 elif self.rm == 6:
                     return '%04Xh, %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, self.word))
             elif self.direction == 2:
-                if self.rm == 1:
+                if self.rm == 0:
+                    return '%s, [bx+si]' % (Register(self.reg, self.word))
+                elif self.rm == 1:
                     return '%s, [bx+di]' % (Register(self.reg, self.word))
                 elif self.rm == 4:
                     return '%s, [si]' % (Register(self.reg, self.word))
