@@ -404,15 +404,19 @@ class ModSr(object):
         elif self.mod == 1:
             if self.rm == 5:
                 return 'word ptr [di+%d], %s' % (struct.unpack('<b', self.extra[:1])[0], SegmentRegister(self.sr))
+            elif self.rm == 6:
+                return 'word ptr [bp+%d], %s' % (struct.unpack('<b', self.extra[:1])[0], SegmentRegister(self.sr))
         elif self.mod == 2:
-            if self.sr == 0:
+            if self.rm == 0:
                 return 'word ptr [bx+si+%d], %s' % (struct.unpack('<h', self.extra[:2])[0], SegmentRegister(self.sr))
+            elif self.rm == 6:
+                return 'word ptr [bp+%d], %s' % (struct.unpack('<h', self.extra[:2])[0], SegmentRegister(self.sr))
         elif self.mod == 3:
             if self.direction == 0:
                 return '%s, %s' % (Register(self.rm, self.word), SegmentRegister(self.sr))
             else:
                 return '%s, %s' % (SegmentRegister(self.sr), Register(self.rm, self.word))
-        raise Exception('Unimplemented', self.mod, self.sr)
+        raise Exception('Unimplemented', self.mod, self.rm)
 
     def __len__(self):
         if self.mod == 0:
