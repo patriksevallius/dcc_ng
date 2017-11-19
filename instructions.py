@@ -646,7 +646,7 @@ class IntermediateInstruction:
                 elif self.modreg.reg == 7:
                     return 'cmp [di+%d], %s' % (struct.unpack('<B', self.data[1:2])[0],
                                                 Immediate16(struct.unpack('<H', self.data[2:4])[0]))
-            if self.modreg.rm == 6:
+            elif self.modreg.rm == 6:
                 if self.modreg.reg == 0:
                     if self.src_word:
                         return 'add [bp+%d], %s' % (struct.unpack('<B', self.data[1:2])[0],
@@ -662,7 +662,11 @@ class IntermediateInstruction:
                         return 'cmp [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
                                                     Immediate8(struct.unpack('<B', self.data[2:3])[0]))
         elif self.modreg.mod == 2:
-            if self.modreg.rm == 6:
+            if self.modreg.rm == 5:
+                if self.modreg.reg == 7:
+                    return 'cmp [di+%d], %s' % (struct.unpack('<B', self.data[1:2])[0],
+                                                Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+            elif self.modreg.rm == 6:
                 if self.modreg.reg == 7:
                     return 'cmp [bp+%d], %s' % (struct.unpack('<B', self.data[1:2])[0],
                                                 Immediate16(struct.unpack('<H', self.data[2:4])[0]))
