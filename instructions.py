@@ -602,7 +602,7 @@ class PushSSInstruction():
 class SBBInstruction():
     def __init__(self, data):
         self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01)
+        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
 
     def __str__(self):
         return 'sbb %s' % self.modreg
