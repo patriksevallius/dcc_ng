@@ -791,17 +791,116 @@ class IntermediateInstruction:
             elif self.modreg.rm == 6:
                 if self.modreg.reg == 0:
                     if self.src_word:
-                        return 'add [bp+%d], %s' % (struct.unpack('<B', self.data[1:2])[0],
+                        return 'add [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
                                                     Immediate16(struct.unpack('<H', self.data[2:4])[0]))
                     else:
                         return 'add [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
                                                     Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 1:
+                    if self.src_word:
+                        return 'or [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'or [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 2:
+                    if self.src_word:
+                        return 'adc [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'adc [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 3:
+                    if self.src_word:
+                        return 'sbb [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'sbb [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 4:
+                    if self.src_word:
+                        return 'and [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'and [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 5:
+                    if self.src_word:
+                        return 'sub [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'sub [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 6:
+                    if self.src_word:
+                        return 'xor [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'xor [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
                 elif self.modreg.reg == 7:
                     if self.src_word:
-                        return 'cmp [bp+%d], %s' % (struct.unpack('<B', self.data[1:2])[0],
+                        return 'cmp [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
                                                     Immediate16(struct.unpack('<H', self.data[2:4])[0]))
                     else:
                         return 'cmp [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+            elif self.modreg.rm == 7:
+                if self.modreg.reg == 0:
+                    if self.src_word:
+                        return 'add [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'add [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 1:
+                    if self.src_word:
+                        return 'or [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'or [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 2:
+                    if self.src_word:
+                        return 'adc [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'adc [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 3:
+                    if self.src_word:
+                        return 'sbb [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'sbb [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 4:
+                    if self.src_word:
+                        return 'and [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'and [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 5:
+                    if self.src_word:
+                        return 'sub [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'sub [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 6:
+                    if self.src_word:
+                        return 'xor [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'xor [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                elif self.modreg.reg == 7:
+                    if self.src_word:
+                        return 'cmp [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'cmp [bx+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
                                                     Immediate8(struct.unpack('<B', self.data[2:3])[0]))
         elif self.modreg.mod == 2:
             if self.modreg.rm == 5:
