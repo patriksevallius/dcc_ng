@@ -1775,13 +1775,7 @@ class Instruction(object):
             return ESSegmentOverride(Instruction.decode(program, offset+1))
         elif code == 0x27:
             raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x28:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x29:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x2a:
-            raise Exception('Unimplemented op-code: %x' % code)
-        elif code == 0x2b:
+        elif 0x28 <= code == 0x2b:
             return SubInstruction(program[offset:offset+5])
         elif code == 0x2c:
             raise Exception('Unimplemented op-code: %x' % code)
