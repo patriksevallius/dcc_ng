@@ -476,9 +476,9 @@ class ModReg(object):
                     return 5
             elif self.mod == 1:
                 if self.rm == 3:
-                    return 5
+                    return 4
                 if self.rm == 5:
-                    return 5
+                    return 4
                 elif self.rm == 6:
                     return 4
             elif self.mod == 2:
