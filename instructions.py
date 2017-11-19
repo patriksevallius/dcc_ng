@@ -176,7 +176,7 @@ class SubAlImm8Instruction(object):
         return 'sub al, %02Xh' % (self.immediate8)
 
     def __len__(self):
-        return 3
+        return 2
 
 
 class SubAxImm16Instruction(object):
