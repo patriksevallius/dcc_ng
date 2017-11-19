@@ -462,11 +462,14 @@ class MovMem16Imm16Instruction(object):
             return 'mov %04Xh, %04Xh' % (self.mem16, self.immediate16)
         elif self.modreg.mod == 1:
             if self.modreg.rm == 5:
-                return 'mov [di+%02X], %04Xh' % (struct.unpack('<B', self.data[2:3])[0],
+                return 'mov [di+%02X], %04Xh' % (struct.unpack('<b', self.data[2:3])[0],
                                                  struct.unpack('<H', self.data[3:5])[0])
         elif self.modreg.mod == 2:
             if self.modreg.rm == 5:
-                return 'mov [di+%04X], %04Xh' % (struct.unpack('<H', self.data[2:4])[0],
+                return 'mov [di+%04X], %04Xh' % (struct.unpack('<h', self.data[2:4])[0],
+                                                 struct.unpack('<H', self.data[4:6])[0])
+            elif self.modreg.rm == 6:
+                return 'mov [bp+%04X], %04Xh' % (struct.unpack('<h', self.data[2:4])[0],
                                                  struct.unpack('<H', self.data[4:6])[0])
 
         raise Exception('Unimplemented', self.modreg)
