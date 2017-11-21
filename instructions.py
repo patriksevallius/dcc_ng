@@ -147,6 +147,17 @@ class OutAlDxInstruction(object):
         return 1
 
 
+class AddAlInstruction(object):
+    def __init__(self, data):
+        self.immediate8 = struct.unpack('<B', data)[0]
+
+    def __str__(self):
+        return 'add al, %xh' % (self.immediate8)
+
+    def __len__(self):
+        return 3
+
+
 class AddAxInstruction(object):
     def __init__(self, data):
         self.immediate16 = struct.unpack('<H', data)[0]
@@ -2401,7 +2412,7 @@ class Instruction(object):
         if 0x0 <= code <= 0x3:
             return AddInstruction(program[offset:offset+5])
         elif code == 0x4:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return AddAlInstruction(program[offset+1:offset+2])
         elif code == 0x5:
             return AddAxInstruction(program[offset+1:offset+3])
         elif code == 0x6:
