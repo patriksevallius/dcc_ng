@@ -45,6 +45,8 @@ class ProgramIterator(object):
 
     def __next__(self):
         address = self.addresses.pop()
+        if address == Address(0x0000, 0x0156):
+            raise StopIteration
         instruction = Instruction.decode(self.program, address.segment * 16 + address.offset)
         instruction.address = address
         self.visited.append(address)
