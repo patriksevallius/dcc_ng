@@ -1065,6 +1065,14 @@ class PushSSInstruction():
         return 1
 
 
+class PopSSInstruction():
+    def __str__(self):
+        return 'pop ss'
+
+    def __len__(self):
+        return 1
+
+
 class SBBInstruction():
     def __init__(self, data):
         self.data = data
@@ -2438,7 +2446,7 @@ class Instruction(object):
         elif code == 0x16:
             return PushSSInstruction()
         elif code == 0x17:
-            raise Exception('Unimplemented op-code: %x' % code)
+            return PopSSInstruction()
         elif 0x18 <= code <= 0x1b:
             return SBBInstruction(program[offset:offset+4])
         elif code == 0x1c:
