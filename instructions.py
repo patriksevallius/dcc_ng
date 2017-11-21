@@ -786,8 +786,13 @@ class IntermediateInstruction:
                 elif self.modreg.reg == 6:
                     return 'xor %s, %s' % (Register(self.modreg.rm, self.dst_word), self.imm)
                 elif self.modreg.reg == 7:
-                    return 'cmp [di+%d], %s' % (struct.unpack('<B', self.data[1:2])[0],
-                                                Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    if self.src_word:
+                        return 'cmp [di+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    else:
+                        return 'cmp [di+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+
             elif self.modreg.rm == 6:
                 if self.modreg.reg == 0:
                     if self.src_word:
@@ -905,12 +910,20 @@ class IntermediateInstruction:
         elif self.modreg.mod == 2:
             if self.modreg.rm == 5:
                 if self.modreg.reg == 7:
-                    return 'cmp [di+%d], %s' % (struct.unpack('<B', self.data[1:2])[0],
-                                                Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    if self.src_word:
+                        return 'cmp [di+%s], %s' % (Immediate16(struct.unpack('<h', self.data[1:3])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[3:5])[0]))
+                    else:
+                        return 'cmp [di+%s], %s' % (Immediate16(struct.unpack('<h', self.data[1:3])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[3:4])[0]))
             elif self.modreg.rm == 6:
                 if self.modreg.reg == 7:
-                    return 'cmp [bp+%d], %s' % (struct.unpack('<B', self.data[1:2])[0],
-                                                Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                    if self.src_word:
+                        return 'cmp [bp+%s], %s' % (Immediate16(struct.unpack('<h', self.data[1:3])[0]),
+                                                    Immediate16(struct.unpack('<H', self.data[3:5])[0]))
+                    else:
+                        return 'cmp [bp+%s], %s' % (Immediate16(struct.unpack('<h', self.data[1:3])[0]),
+                                                    Immediate8(struct.unpack('<B', self.data[3:4])[0]))
 
         elif self.modreg.mod == 3:
             if self.modreg.reg == 0:
@@ -951,7 +964,10 @@ class IntermediateInstruction:
             else:
                 return 4
         elif self.modreg.mod == 2:
-            return 4
+            if self.src_word:
+                return 6
+            else:
+                return 5
         elif self.modreg.mod == 3:
             if self.src_word:
                 return 4
@@ -2569,7 +2585,7 @@ class Instruction(object):
         elif code == 0x7f:
             return JgInstruction(program[offset+1:offset+2])
         elif 0x80 <= code <= 0x83:
-            return IntermediateInstruction(program[offset+1:offset+5], code - 0x80)
+            return IntermediateInstruction(program[offset+1:offset+6], code - 0x80)
         elif code == 0x84:
             return TestInstruction(program[offset:offset+5])
         elif code == 0x85:
