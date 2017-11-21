@@ -620,7 +620,7 @@ class MovMem16Imm16Instruction(object):
 class XorInstruction(object):
     def __init__(self, data):
         self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01)
+        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
 
     def __str__(self):
         return 'xor %s' % self.modreg
@@ -649,7 +649,7 @@ class IntermediateInstruction:
             self.src_word = False
             self.dst_word = True
             self.imm = Immediate8(struct.unpack('<B', self.data[1:2])[0])
-        self.modreg = ModReg(data[0], 0, self.src_word)
+        self.modreg = ModReg(data[0], 0, self.src_word, data[2:])
 
     def __str__(self):
         if self.modreg.mod == 0:
@@ -1550,7 +1550,7 @@ class JgInstruction():
 class ShiftInstruction(object):
     def __init__(self, data):
         self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01)
+        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
 
     def __str__(self):
         if self.modreg.direction == 0:
