@@ -29,6 +29,49 @@ class Immediate16:
         return 2
 
 
+class Register:
+    def __init__(self, register, word):
+        self.register = register
+        self.word = word
+
+    def __str__(self):
+        if self.register == 0:
+            return 'ax' if self.word else 'al'
+        elif self.register == 1:
+            return 'cx' if self.word else 'cl'
+        elif self.register == 2:
+            return 'dx' if self.word else 'dl'
+        elif self.register == 3:
+            return 'bx' if self.word else 'bl'
+        elif self.register == 4:
+            return 'sp' if self.word else 'ah'
+        elif self.register == 5:
+            return 'bp' if self.word else 'ch'
+        elif self.register == 6:
+            return 'si' if self.word else 'dh'
+        elif self.register == 7:
+            return 'di' if self.word else 'bh'
+        print('Unknown register %d' % self.register)
+        raise Exception
+
+
+class SegmentRegister:
+    def __init__(self, register):
+        self.register = register
+
+    def __str__(self):
+        if self.register == 0:
+            return 'es'
+        elif self.register == 1:
+            return 'cs'
+        elif self.register == 2:
+            return 'ss'
+        elif self.register == 3:
+            return 'ds'
+        print('Unknown segment register %d' % self.register)
+        raise Exception
+
+
 class CallInstruction:
     def __init__(self, data):
         self.data = data
@@ -210,49 +253,6 @@ class SubAxImm16Instruction:
 
     def __len__(self):
         return 3
-
-
-class Register:
-    def __init__(self, register, word):
-        self.register = register
-        self.word = word
-
-    def __str__(self):
-        if self.register == 0:
-            return 'ax' if self.word else 'al'
-        elif self.register == 1:
-            return 'cx' if self.word else 'cl'
-        elif self.register == 2:
-            return 'dx' if self.word else 'dl'
-        elif self.register == 3:
-            return 'bx' if self.word else 'bl'
-        elif self.register == 4:
-            return 'sp' if self.word else 'ah'
-        elif self.register == 5:
-            return 'bp' if self.word else 'ch'
-        elif self.register == 6:
-            return 'si' if self.word else 'dh'
-        elif self.register == 7:
-            return 'di' if self.word else 'bh'
-        print('Unknown register %d' % self.register)
-        raise Exception
-
-
-class SegmentRegister:
-    def __init__(self, register):
-        self.register = register
-
-    def __str__(self):
-        if self.register == 0:
-            return 'es'
-        elif self.register == 1:
-            return 'cs'
-        elif self.register == 2:
-            return 'ss'
-        elif self.register == 3:
-            return 'ds'
-        print('Unknown segment register %d' % self.register)
-        raise Exception
 
 
 class PushInstruction:
