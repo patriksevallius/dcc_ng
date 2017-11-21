@@ -91,10 +91,7 @@ class PopfInstruction(object):
 class CallNearInstruction(object):
     def __init__(self, data):
         self.data = data
-        # TODO: can this be replaced with '<h'?
-        self.offset = struct.unpack('<H', self.data)[0]
-        if self.offset & 0x8000:
-            self.offset = -(0x10000 - self.offset)
+        self.offset = struct.unpack('<h', self.data)[0]
 
     def __str__(self):
         return 'call %04Xh' % (self.offset)
@@ -106,7 +103,7 @@ class CallNearInstruction(object):
 class JumpNearInstruction(object):
     def __init__(self, data):
         self.data = data
-        (self.offset) = struct.unpack('<h', self.data)[0]
+        self.offset = struct.unpack('<h', self.data)[0]
 
     def __str__(self):
         return 'jmp %04x' % (self.offset)
@@ -815,10 +812,10 @@ class IntermediateInstruction:
                 elif self.modreg.reg == 1:
                     if self.src_word:
                         return 'or [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
-                                                    Immediate16(struct.unpack('<H', self.data[2:4])[0]))
+                                                   Immediate16(struct.unpack('<H', self.data[2:4])[0]))
                     else:
                         return 'or [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
-                                                    Immediate8(struct.unpack('<B', self.data[2:3])[0]))
+                                                   Immediate8(struct.unpack('<B', self.data[2:3])[0]))
                 elif self.modreg.reg == 2:
                     if self.src_word:
                         return 'adc [bp+%s], %s' % (Immediate8(struct.unpack('<B', self.data[1:2])[0]),
