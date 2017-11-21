@@ -155,7 +155,7 @@ class AddAlInstruction(object):
         return 'add al, %xh' % (self.immediate8)
 
     def __len__(self):
-        return 3
+        return 2
 
 
 class AddAxInstruction(object):
