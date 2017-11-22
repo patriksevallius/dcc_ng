@@ -334,7 +334,7 @@ class ModReg2:
             elif self.rm == 7:
                 return '[bx]'
         elif self.mod == 1:
-            disposition = Immediate8(struct.unpack('<B', self.extra[:1])[0])
+            disposition = Immediate8(struct.unpack('<b', self.extra[:1])[0])
             if self.rm == 0:
                 return '[bx+si+%s]' % disposition
             elif self.rm == 1:
@@ -352,7 +352,7 @@ class ModReg2:
             elif self.rm == 7:
                 return '[bx+%s]' % disposition
         elif self.mod == 2:
-            disposition = Immediate16(struct.unpack('<H', self.extra[:2])[0])
+            disposition = Immediate16(struct.unpack('<h', self.extra[:2])[0])
             if self.rm == 0:
                 return '[bx+si+%s]' % disposition
             elif self.rm == 1:
@@ -437,8 +437,8 @@ class ModSr:
 class RegToRegMemBaseInstruction:
     def __init__(self, data):
         self.data = data
-        self.direction = self.data[0] & 0x02 == 0x02
-        self.word = self.data[0] & 0x01 == 0x01
+        self.direction = self.get_direction()
+        self.word = self.get_size()
         self.modreg = ModReg2(data[1], self.word, data[2:])
 
         register = Register(self.modreg.reg, self.word)
@@ -448,6 +448,12 @@ class RegToRegMemBaseInstruction:
         else:
             self.source = register
             self.dest = self.modreg
+
+    def get_size(self):
+        return self.data[0] & 0x01 == 0x01
+
+    def get_direction(self):
+        return self.data[0] & 0x02 == 0x02
 
     def __len__(self):
         return 1 + len(self.modreg)
@@ -1497,16 +1503,12 @@ class TestInstruction(RegToRegMemBaseInstruction):
         return 'test %s, %s' % (self.source, self.dest)
 
 
-class XchgInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, word=False, extra=data[2:])
+class XchgInstruction(RegToRegMemBaseInstruction):
+    def get_size(self):
+        return False
 
     def __str__(self):
-        return 'xchg %s' % self.modreg
-
-    def __len__(self):
-        return len(self.modreg)
+        return 'xchg %s, %s' % (self.source, self.dest)
 
 
 class MovInstruction(RegToRegMemBaseInstruction):
@@ -1970,40 +1972,39 @@ class ReturnIntraInstruction:
         return 1
 
 
-class LesInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], 2, word=True, extra=data[2:])
+class LesInstruction(RegToRegMemBaseInstruction):
+    def get_size(self):
+        return True
+
+    def get_direction(self):
+        return True
 
     def __str__(self):
-        return 'les %s' % self.modreg
-
-    def __len__(self):
-        return len(self.modreg)
+        return 'les %s, %s' % (self.source, self.dest)
 
 
-class LdsInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], 2, word=True, extra=data[2:])
+class LdsInstruction(RegToRegMemBaseInstruction):
+    def get_size(self):
+        return True
 
-    def __str__(self):
-        return 'lds %s' % self.modreg
-
-    def __len__(self):
-        return len(self.modreg)
-
-
-class MovMem8Imm8Instruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], 8, data[0] & 0x01, data[2:])
+    def get_direction(self):
+        return True
 
     def __str__(self):
-        return 'mov %s' % self.modreg
+        return 'lds %s, %s' % (self.source, self.dest)
+
+
+class MovMem8Imm8Instruction(RegToRegMemBaseInstruction):
+    def __str__(self):
+        offset = 1+len(self.modreg)
+        imm = Immediate8(struct.unpack('<B', self.data[offset:offset+1])[0])
+        return 'mov %s, %s' % (self.source, imm)
+
+    def get_direction(self):
+        return False
 
     def __len__(self):
-        return len(self.modreg)
+        return 1 + len(self.modreg) + 1
 
 
 class MovMem16Imm16Instruction:
