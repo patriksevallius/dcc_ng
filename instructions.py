@@ -434,7 +434,7 @@ class ModSr:
         raise Exception('Unimplemented', self.mod)
 
 
-class AddInstruction:
+class RegToRegMemBaseInstruction:
     def __init__(self, data):
         self.data = data
         self.direction = self.data[0] & 0x02 == 0x02
@@ -449,19 +449,21 @@ class AddInstruction:
             self.source = register
             self.dest = self.modreg
 
-    def __str__(self):
-        return 'add %s, %s' % (self.source, self.dest)
-
     def __len__(self):
         return 1 + len(self.modreg)
 
 
+class AddInstruction(RegToRegMemBaseInstruction):
+    def __str__(self):
+        return 'add %s, %s' % (self.source, self.dest)
+
+
 class AddAlInstruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'add al, %xh' % self.immediate8
+        return 'add al, %s' % self.immediate
 
     def __len__(self):
         return 2
@@ -469,10 +471,10 @@ class AddAlInstruction:
 
 class AddAxInstruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'add ax, %xh' % self.immediate16
+        return 'add ax, %s' % self.immediate
 
     def __len__(self):
         return 3
@@ -494,35 +496,29 @@ class PopESInstruction:
         return 1
 
 
-class OrInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
-
+class OrInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'or %s' % self.modreg
-
-    def __len__(self):
-        return len(self.modreg)
+        return 'or %s, %s' % (self.source, self.dest)
 
 
 class OrAlImm8Instruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'or al, %02Xh' % self.immediate8
+        return 'or al, %s' % self.immediate
 
     def __len__(self):
         return 2
 
 
+
 class OrAxImm16Instruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'or ax, %04Xh' % self.immediate16
+        return 'or ax, %s' % self.immediate
 
     def __len__(self):
         return 3
@@ -536,16 +532,9 @@ class PushCSInstruction:
         return 1
 
 
-class AdcInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
-
+class AdcInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'adc %s' % self.modreg
-
-    def __len__(self):
-        return len(self.modreg)
+        return 'adc %s, %s' % (self.source, self.dest)
 
 
 class AdcAlImm8Instruction:
@@ -586,16 +575,9 @@ class PopSSInstruction:
         return 1
 
 
-class SBBInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
-
+class SBBInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'sbb %s' % self.modreg
-
-    def __len__(self):
-        return len(self.modreg)
+        return 'sbb %s, %s' % (self.source, self.dest)
 
 
 class SBBAlImm8Instruction:
@@ -636,16 +618,9 @@ class PopDSInstruction:
         return 1
 
 
-class AndInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
-
+class AndInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'and %s' % self.modreg
-
-    def __len__(self):
-        return len(self.modreg)
+        return 'and %s, %s' % (self.source, self.dest)
 
 
 class AndALImm8Instruction:
@@ -690,16 +665,9 @@ class DAAInstruction:
         return 1
 
 
-class SubInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
-
+class SubInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'sub %s' % self.modreg
-
-    def __len__(self):
-        return len(self.modreg)
+        return 'sub %s, %s' % (self.source, self.dest)
 
 
 class SubAlImm8Instruction:
@@ -736,16 +704,9 @@ class CSSegmentOverride:
         return len(self.instruction) + 1
 
 
-class XorInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
-
+class XorInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'xor %s' % self.modreg
-
-    def __len__(self):
-        return 2
+        return 'xor %s, %s' % (self.source, self.dest)
 
 
 class SSSegmentOverride:
@@ -760,16 +721,9 @@ class SSSegmentOverride:
         return len(self.instruction) + 1
 
 
-class CmpInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
-
+class CmpInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'cmp %s' % self.modreg
-
-    def __len__(self):
-        return len(self.modreg)
+        return 'cmp %s, %s' % (self.source, self.dest)
 
 
 class CmpAlImm8Instruction:
@@ -1538,16 +1492,9 @@ class IntermediateInstruction:
         raise Exception('Unimplemented', self.modreg)
 
 
-class TestInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, extra=data[2:])
-
+class TestInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'test %s' % self.modreg
-
-    def __len__(self):
-        return len(self.modreg)
+        return 'test %s, %s' % (self.source, self.dest)
 
 
 class XchgInstruction:
@@ -1562,16 +1509,9 @@ class XchgInstruction:
         return len(self.modreg)
 
 
-class MovInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
-
+class MovInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'mov %s' % self.modreg
-
-    def __len__(self):
-        return len(self.modreg)
+        return 'mov %s, %s' % (self.source, self.dest)
 
 
 class MoveSegRegInstruction:
@@ -1586,16 +1526,9 @@ class MoveSegRegInstruction:
         return len(self.modsr)
 
 
-class LoadEffectiveAddressInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
-
+class LoadEffectiveAddressInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'lea %s' % self.modreg
-
-    def __len__(self):
-        return len(self.modreg)
+        return 'lea %s, %s' % (self.source, self.dest)
 
 
 class NopInstruction:
