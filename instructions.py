@@ -72,6 +72,89 @@ class SegmentRegister:
         raise Exception
 
 
+class ModReg2:
+    def __init__(self, modreg, word, extra=None):
+        self.mod = (modreg & 0xc0) >> 6
+        self.reg = (modreg & 0x38) >> 3
+        self.rm = modreg & 0x07
+        self.word = word
+        self.extra = extra
+
+    def __str__(self):
+        if self.mod == 0:
+            if self.rm == 0:
+                return '[bx+si]'
+            elif self.rm == 1:
+                return '[bx+di]'
+            elif self.rm == 2:
+                return '[bp+si]'
+            elif self.rm == 3:
+                return '[bp+di]'
+            elif self.rm == 4:
+                return '[si]'
+            elif self.rm == 5:
+                return '[di]'
+            elif self.rm == 6:
+                return '%s' % Immediate16(struct.unpack('<H', self.extra[:2])[0])
+            elif self.rm == 7:
+                return '[bx]'
+        elif self.mod == 1:
+            disposition = Immediate8(struct.unpack('<B', self.extra[:1])[0])
+            if self.rm == 0:
+                return '[bx+si+%s]' % disposition
+            elif self.rm == 1:
+                return '[bx+di+%s]' % disposition
+            elif self.rm == 2:
+                return '[bp+si+%s]' % disposition
+            elif self.rm == 3:
+                return '[bp+si+%s]' % disposition
+            elif self.rm == 4:
+                return '[si+%s]' % disposition
+            elif self.rm == 5:
+                return '[di+%s]' % disposition
+            elif self.rm == 6:
+                return '[bp+%s]' % disposition
+            elif self.rm == 7:
+                return '[bx+%s]' % disposition
+        elif self.mod == 2:
+            disposition = Immediate16(struct.unpack('<H', self.extra[:2])[0])
+            if self.rm == 0:
+                return '[bx+si+%s]' % disposition
+            elif self.rm == 1:
+                return '[bx+di+%s]' % disposition
+            elif self.rm == 2:
+                return '[bp+si+%s]' % disposition
+            elif self.rm == 3:
+                return '[bp+si+%s]' % disposition
+            elif self.rm == 4:
+                return '[si+%s]' % disposition
+            elif self.rm == 5:
+                return '[di+%s]' % disposition
+            elif self.rm == 6:
+                return '[bp+%s]' % disposition
+            elif self.rm == 7:
+                return '[bx+%s]' % disposition
+        elif self.mod == 3:
+            return '%s' % Register(self.rm, self.word)
+
+    def __repr__(self):
+        return 'ModReg(mod=%d, reg=%d, rm=%d, direction=%d, word=%s)' %\
+               (self.mod, self.reg, self.rm, self.direction, self.word)
+
+    def __len__(self):
+        if self.mod == 0:
+            if self.rm == 6:
+                return 3
+            else:
+                return 1
+        elif self.mod == 1:
+            return 2
+        elif self.mod == 2:
+            return 3
+        elif self.mod == 3:
+            return 1
+
+
 class CallInstruction:
     def __init__(self, data):
         self.data = data
@@ -212,13 +295,23 @@ class AddAxInstruction:
 class AddInstruction:
     def __init__(self, data):
         self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
+        self.direction = self.data[0] & 0x02 == 0x02
+        self.word = self.data[0] & 0x01 == 0x01
+        self.modreg = ModReg2(data[1], self.word, data[2:])
+
+        register = Register(self.modreg.reg, self.word)
+        if self.direction == 0:
+            self.source = self.modreg
+            self.dest = register
+        else:
+            self.source = register
+            self.dest = self.modreg
 
     def __str__(self):
-        return 'add %s' % self.modreg
+        return 'add %s, %s' % (self.source, self.dest)
 
     def __len__(self):
-        return len(self.modreg)
+        return 1 + len(self.modreg)
 
 
 class SubInstruction:
@@ -441,7 +534,7 @@ class ModReg:
                 elif self.rm == 5:
                     return '[di+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
                 elif self.rm == 6:
-                    return '[bp-%xh], %s' % (0x10000 - struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
+                    return '[bp+%s], %s' % (Immediate16(struct.unpack('<H', self.extra[:2])[0]), Register(self.reg, 1))
                 elif self.rm == 7:
                     return '[bx+%xh], %s' % (struct.unpack('<H', self.extra[:2])[0], Register(self.reg, 1))
             elif self.direction == 2:
@@ -452,7 +545,7 @@ class ModReg:
                 elif self.rm == 5:
                     return '%s, [di+%xh]' % (Register(self.reg, 1), struct.unpack('<H', self.extra[:2])[0])
                 elif self.rm == 6:
-                    return '%s, [bp-%xh]' % (Register(self.reg, 1), 0x10000-struct.unpack('<H', self.extra[:2])[0])
+                    return '%s, [bp+%s]' % (Register(self.reg, 1), Immediate16(struct.unpack('<H', self.extra[:2])[0]))
             elif self.direction == 4:
                 if self.rm == 5:
                     return '[di+%s]' % (Immediate8(struct.unpack('<b', self.extra[:1])[0]))
