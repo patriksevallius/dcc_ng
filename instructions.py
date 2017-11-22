@@ -2202,7 +2202,7 @@ class NotInstruction:
         return 'not %s' % self.modreg
 
     def __len__(self):
-        return len(self.modreg)
+        return 1 + len(self.modreg)
 
 
 class TestImmInstruction:
@@ -2217,7 +2217,7 @@ class TestImmInstruction:
         return 'not %s, %s' % (self.modreg, self.imm)
 
     def __len__(self):
-        return len(self.modreg) + len(self.imm)
+        return 1 + len(self.modreg) + len(self.imm)
 
 
 class NegInstruction:
@@ -2228,7 +2228,7 @@ class NegInstruction:
         return 'not %s' % self.modreg
 
     def __len__(self):
-        return len(self.modreg)
+        return 1 + len(self.modreg)
 
 
 class DivInstruction:
@@ -2239,7 +2239,7 @@ class DivInstruction:
         return 'div %s' % self.modreg
 
     def __len__(self):
-        return len(self.modreg)
+        return 1 + len(self.modreg)
 
 
 class IdivInstruction:
@@ -2250,7 +2250,7 @@ class IdivInstruction:
         return 'idiv %s' % self.modreg
 
     def __len__(self):
-        return len(self.modreg)
+        return 1 + len(self.modreg)
 
 
 class MulInstruction:
@@ -2261,7 +2261,7 @@ class MulInstruction:
         return 'mul %s' % self.modreg
 
     def __len__(self):
-        return len(self.modreg)
+        return 1 + len(self.modreg)
 
 
 class ImulInstruction:
@@ -2272,11 +2272,11 @@ class ImulInstruction:
         return 'imul %s' % self.modreg
 
     def __len__(self):
-        return len(self.modreg)
+        return 1 + len(self.modreg)
 
 
 def Grp1Instruction(data):
-    modreg = ModReg(data[1], 4, data[0] & 0x01, data[2:])
+    modreg = ModReg2(data[1], data[0] & 0x01, data[2:])
 
     if modreg.reg == 0:
         return TestImmInstruction(modreg)
