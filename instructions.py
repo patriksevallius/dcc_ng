@@ -373,8 +373,8 @@ class ModReg2:
             return '%s' % Register(self.rm, self.word)
 
     def __repr__(self):
-        return 'ModReg(mod=%d, reg=%d, rm=%d, direction=%d, word=%s)' %\
-               (self.mod, self.reg, self.rm, self.direction, self.word)
+        return 'ModReg(mod=%d, reg=%d, rm=%d, word=%s)' %\
+               (self.mod, self.reg, self.rm, self.word)
 
     def __len__(self):
         if self.mod == 0:
@@ -516,7 +516,6 @@ class OrAlImm8Instruction:
 
     def __len__(self):
         return 2
-
 
 
 class OrAxImm16Instruction:
@@ -2007,42 +2006,17 @@ class MovMem8Imm8Instruction(RegToRegMemBaseInstruction):
         return 1 + len(self.modreg) + 1
 
 
-class MovMem16Imm16Instruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
-        self.mem16 = struct.unpack('<H', self.data[2:4])[0]
-        self.immediate16 = struct.unpack('<H', self.data[4:])[0]
-
+class MovMem16Imm16Instruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        # TODO use modreg the right way
-        if self.modreg.mod == 0:
-            return 'mov %04Xh, %04Xh' % (self.mem16, self.immediate16)
-        elif self.modreg.mod == 1:
-            if self.modreg.rm == 5:
-                return 'mov [di+%02X], %04Xh' % (struct.unpack('<b', self.data[2:3])[0],
-                                                 struct.unpack('<H', self.data[3:5])[0])
-            elif self.modreg.rm == 6:
-                return 'mov [bp+%02X], %04Xh' % (struct.unpack('<b', self.data[2:3])[0],
-                                                 struct.unpack('<H', self.data[3:5])[0])
-        elif self.modreg.mod == 2:
-            if self.modreg.rm == 5:
-                return 'mov [di+%04X], %04Xh' % (struct.unpack('<h', self.data[2:4])[0],
-                                                 struct.unpack('<H', self.data[4:6])[0])
-            elif self.modreg.rm == 6:
-                return 'mov [bp+%04X], %04Xh' % (struct.unpack('<h', self.data[2:4])[0],
-                                                 struct.unpack('<H', self.data[4:6])[0])
+        offset = 1+len(self.modreg)
+        imm = Immediate16(struct.unpack('<H', self.data[offset:offset + 2])[0])
+        return 'mov %s, %s' % (self.source, imm)
 
-        raise Exception('Unimplemented', self.modreg)
+    def get_direction(self):
+        return False
 
     def __len__(self):
-        if self.modreg.mod == 0:
-            return 6
-        elif self.modreg.mod == 1:
-            return 5
-        elif self.modreg.mod == 2:
-            return 6
-        raise Exception('Unimplemented', self.modreg)
+        return 1 + len(self.modreg) + 2
 
 
 class ReturnImm16Instruction:
