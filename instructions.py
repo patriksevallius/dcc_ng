@@ -159,13 +159,13 @@ class RegToRegMemBaseInstruction:
     def __init__(self, data):
         self.data = data
         self.direction = self.get_direction()
-        self.word = self.get_size()
+        self.word = self.is_word()
         self.modreg = ModReg(data[1], self.word, data[2:])
 
         self.destination = self.get_destination()
         self.source = self.get_source()
 
-    def get_size(self):
+    def is_word(self):
         return self.data[0] & 0x01 == 0x01
 
     def get_direction(self):
@@ -937,7 +937,7 @@ class TestInstruction(RegToRegMemBaseInstruction):
 
 
 class XchgInstruction(RegToRegMemBaseInstruction):
-    def get_size(self):
+    def is_word(self):
         return False
 
     def __str__(self):
@@ -950,7 +950,7 @@ class MovInstruction(RegToRegMemBaseInstruction):
 
 
 class MoveSegRegInstruction(RegToRegMemBaseInstruction):
-    def get_size(self):
+    def is_word(self):
         return True
 
     def get_destination(self):
@@ -1424,7 +1424,7 @@ class ReturnIntraInstruction:
 
 
 class LesInstruction(RegToRegMemBaseInstruction):
-    def get_size(self):
+    def is_word(self):
         return True
 
     def get_direction(self):
@@ -1435,7 +1435,7 @@ class LesInstruction(RegToRegMemBaseInstruction):
 
 
 class LdsInstruction(RegToRegMemBaseInstruction):
-    def get_size(self):
+    def is_word(self):
         return True
 
     def get_direction(self):
