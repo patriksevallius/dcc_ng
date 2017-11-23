@@ -57,6 +57,8 @@ class Register:
 
 class SegmentRegister:
     def __init__(self, register):
+        if register > 3:
+            raise Exception('Invalid sr', register)
         self.register = register
 
     def __str__(self):
@@ -68,8 +70,6 @@ class SegmentRegister:
             return 'ss'
         elif self.register == 3:
             return 'ds'
-        print('Unknown segment register %d' % self.register)
-        raise Exception
 
 
 class ModReg:
@@ -153,50 +153,6 @@ class ModReg:
             return 3
         elif self.mod == 3:
             return 1
-
-
-class ModSr:
-    def __init__(self, modsr, direction, word, extra=None):
-        self.mod = (modsr & 0xc0) >> 6
-        self.sr = (modsr & 0x38) >> 3
-        self.rm = modsr & 0x07
-        self.direction = direction
-        self.word = word
-        self.extra = extra
-
-    def __str__(self):
-        if self.sr > 3:
-            raise Exception('Invalid sr', self.sr)
-        if self.mod == 0:
-            if self.rm == 6:
-                return '%04xh, %s' % (struct.unpack('<H', self.extra[:2])[0], SegmentRegister(self.sr))
-        elif self.mod == 1:
-            if self.rm == 5:
-                return 'word ptr [di+%d], %s' % (struct.unpack('<b', self.extra[:1])[0], SegmentRegister(self.sr))
-            elif self.rm == 6:
-                return 'word ptr [bp+%d], %s' % (struct.unpack('<b', self.extra[:1])[0], SegmentRegister(self.sr))
-        elif self.mod == 2:
-            if self.rm == 0:
-                return 'word ptr [bx+si+%d], %s' % (struct.unpack('<h', self.extra[:2])[0], SegmentRegister(self.sr))
-            elif self.rm == 6:
-                return 'word ptr [bp+%d], %s' % (struct.unpack('<h', self.extra[:2])[0], SegmentRegister(self.sr))
-        elif self.mod == 3:
-            if self.direction == 0:
-                return '%s, %s' % (Register(self.rm, self.word), SegmentRegister(self.sr))
-            else:
-                return '%s, %s' % (SegmentRegister(self.sr), Register(self.rm, self.word))
-        raise Exception('Unimplemented', self.mod, self.rm)
-
-    def __len__(self):
-        if self.mod == 0:
-            return 4
-        elif self.mod == 1:
-            return 3
-        elif self.mod == 2:
-            return 4
-        elif self.mod == 3:
-            return 2
-        raise Exception('Unimplemented', self.mod)
 
 
 class RegToRegMemBaseInstruction:
@@ -972,17 +928,24 @@ class MovInstruction(RegToRegMemBaseInstruction):
         return 'mov %s, %s' % (self.source, self.dest)
 
 
-class MoveSegRegInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modsr = ModSr(data[1], data[0] & 0x02, word=True, extra=data[2:])
+class MoveSegRegInstruction(RegToRegMemBaseInstruction):
+    def get_size(self):
+        return True
+
+    def get_source(self):
+        if self.direction:
+            return SegmentRegister(self.modreg.reg)
+        else:
+            return self.modreg
+
+    def get_destination(self):
+        if self.direction:
+            return self.modreg
+        else:
+            return SegmentRegister(self.modreg.reg)
 
     def __str__(self):
-        return 'mov %s' % self.modsr
-
-    def __len__(self):
-        return len(self.modsr)
-
+        return 'mov %s, %s' % (self.source, self.dest)
 
 class LoadEffectiveAddressInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
