@@ -2369,7 +2369,7 @@ class PushMem16Instruction:
         return 'push %s' % self.modreg
 
     def __len__(self):
-        return len(self.modreg)
+        return 1 + len(self.modreg)
 
 
 class IncInstruction:
@@ -2380,7 +2380,7 @@ class IncInstruction:
         return 'inc %s' % self.modreg
 
     def __len__(self):
-        return len(self.modreg)
+        return 1 + len(self.modreg)
 
 
 class DecInstruction:
@@ -2391,7 +2391,7 @@ class DecInstruction:
         return 'dec %s' % self.modreg
 
     def __len__(self):
-        return len(self.modreg)
+        return 1 + len(self.modreg)
 
 
 class Grp2CallNearInstruction(CallNearInstruction):
@@ -2400,7 +2400,7 @@ class Grp2CallNearInstruction(CallNearInstruction):
 
 
 def Grp2Instruction(data):
-    modreg = ModReg(data[1], 4, data[0] & 0x01, data[2:])
+    modreg = ModReg2(data[1], data[0] & 0x01, data[2:])
 
     if modreg.reg == 0:
         return IncInstruction(modreg)
