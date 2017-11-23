@@ -99,7 +99,7 @@ class ModReg:
             elif self.rm == 7:
                 return '[bx]'
         elif self.mod == 1:
-            disposition = Immediate8(struct.unpack('<b', self.extra[:1])[0])
+            disposition = Immediate8(struct.unpack('b', self.extra[:1])[0])
             if self.rm == 0:
                 return '[bx+si+%s]' % disposition
             elif self.rm == 1:
@@ -194,7 +194,7 @@ class AddInstruction(RegToRegMemBaseInstruction):
 
 class AddAlInstruction:
     def __init__(self, data):
-        self.immediate = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'add al, %s' % self.immediate
@@ -243,7 +243,7 @@ class OrInstruction(RegToRegMemBaseInstruction):
 
 class OrAlImm8Instruction:
     def __init__(self, data):
-        self.immediate = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'or al, %s' % self.immediate
@@ -281,7 +281,7 @@ class AdcInstruction(RegToRegMemBaseInstruction):
 
 class AdcAlImm8Instruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'adc al, %s' % self.immediate8
@@ -330,7 +330,7 @@ class SBBInstruction(RegToRegMemBaseInstruction):
 
 class SBBAlImm8Instruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'sbb al, %s' % self.immediate8
@@ -379,7 +379,7 @@ class AndInstruction(RegToRegMemBaseInstruction):
 
 class AndALImm8Instruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'and al, %s' % self.immediate8
@@ -426,7 +426,7 @@ class SubInstruction(RegToRegMemBaseInstruction):
 
 class SubAlImm8Instruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'sub al, %s' % self.immediate8
@@ -482,7 +482,7 @@ class CmpInstruction(RegToRegMemBaseInstruction):
 
 class CmpAlImm8Instruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'cmp al, %s' % self.immediate8
@@ -898,16 +898,16 @@ class IntermediateInstruction:
         offset = len(self.modreg)
         if instruction_type == 0:
             self.src_word = False
-            self.imm = Immediate8(struct.unpack('<B', self.data[offset:offset+1])[0])
+            self.imm = Immediate8(struct.unpack('B', self.data[offset:offset+1])[0])
         elif instruction_type == 1:
             self.src_word = True
             self.imm = Immediate16(struct.unpack('<H', self.data[offset:offset + 2])[0])
         elif instruction_type == 2:
             self.src_word = False
-            self.imm = Immediate8(struct.unpack('<B', self.data[offset:offset+1])[0])
+            self.imm = Immediate8(struct.unpack('B', self.data[offset:offset+1])[0])
         elif instruction_type == 3:
             self.src_word = False
-            self.imm = Immediate8(struct.unpack('<B', self.data[offset:offset+1])[0])
+            self.imm = Immediate8(struct.unpack('B', self.data[offset:offset+1])[0])
 
     def __str__(self):
         if self.modreg.reg == 0:
@@ -1159,7 +1159,7 @@ class MoveAxMem16Instruction:
 
 class MoveMem8AlInstruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'mov %s, al' % self.immediate8
@@ -1238,7 +1238,7 @@ class LodsInstruction:
 
 class MoveAlInstruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'mov al, %s' % self.immediate8
@@ -1249,7 +1249,7 @@ class MoveAlInstruction:
 
 class MoveCLInstruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'mov cl, %s' % self.immediate8
@@ -1260,7 +1260,7 @@ class MoveCLInstruction:
 
 class MoveDLInstruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'mov dl, %s' % self.immediate8
@@ -1271,7 +1271,7 @@ class MoveDLInstruction:
 
 class MoveBLInstruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'mov bl, %s' % self.immediate8
@@ -1282,7 +1282,7 @@ class MoveBLInstruction:
 
 class MoveAhInstruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'mov ah, %s' % self.immediate8
@@ -1293,7 +1293,7 @@ class MoveAhInstruction:
 
 class MoveChInstruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'mov ch, %s' % self.immediate8
@@ -1304,7 +1304,7 @@ class MoveChInstruction:
 
 class MoveDhInstruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'mov dh, %s' % self.immediate8
@@ -1315,7 +1315,7 @@ class MoveDhInstruction:
 
 class MoveBhInstruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'mov bh, %s' % self.immediate8
@@ -1448,7 +1448,7 @@ class LdsInstruction(RegToRegMemBaseInstruction):
 class MovMem8Imm8Instruction(RegToRegMemBaseInstruction):
     def __str__(self):
         offset = 1 + len(self.modreg)
-        imm = Immediate8(struct.unpack('<B', self.data[offset:offset+1])[0])
+        imm = Immediate8(struct.unpack('B', self.data[offset:offset+1])[0])
         return 'mov %s, %s' % (self.source, imm)
 
     def get_direction(self):
@@ -1495,7 +1495,7 @@ class ReturnInstruction:
 
 class InterruptInstruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'int %s' % self.immediate8
@@ -1538,7 +1538,7 @@ class ShiftInstruction(RegToRegMemBaseInstruction):
 
 class LoopInstruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'loop %s' % self.immediate8
@@ -1549,7 +1549,7 @@ class LoopInstruction:
 
 class JcxzInstruction:
     def __init__(self, data):
-        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
+        self.immediate8 = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
         return 'jcxz %s' % self.immediate8
@@ -1597,7 +1597,7 @@ class JumpLongInstruction:
 class JumpShortInstruction:
     def __init__(self, data):
         self.data = data
-        self.offset = struct.unpack('<b', self.data)[0]
+        self.offset = struct.unpack('b', self.data)[0]
 
     def __str__(self):
         return 'jmp %02x' % self.offset
@@ -1653,7 +1653,7 @@ class TestImmInstruction:
         if self.modreg.word:
             self.imm = Immediate16(struct.unpack('<H', self.modreg.extra[:2])[0])
         else:
-            self.imm = Immediate8(struct.unpack('<B', self.modreg.extra[:1])[0])
+            self.imm = Immediate8(struct.unpack('B', self.modreg.extra[:1])[0])
 
     def __str__(self):
         return 'not %s, %s' % (self.modreg, self.imm)
