@@ -157,19 +157,20 @@ class ModReg:
 
 class RegToRegMemBaseInstruction:
     def __init__(self, data):
-        self.data = data
+        self.opcode = data[0]
         self.direction = self.get_direction()
         self.word = self.is_word()
         self.modreg = ModReg(data[1], self.word, data[2:])
+        self.data = data[1 + len(self.modreg):]
 
         self.destination = self.get_destination()
         self.source = self.get_source()
 
     def is_word(self):
-        return self.data[0] & 0x01 == 0x01
+        return self.opcode & 0x01 == 0x01
 
     def get_direction(self):
-        return self.data[0] & 0x02 == 0x02
+        return self.opcode & 0x02 == 0x02
 
     def get_destination(self):
         if self.direction:
@@ -1447,8 +1448,7 @@ class LdsInstruction(RegToRegMemBaseInstruction):
 
 class MovMem8Imm8Instruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        offset = 1 + len(self.modreg)
-        imm = Immediate8(struct.unpack('B', self.data[offset:offset+1])[0])
+        imm = Immediate8(struct.unpack('B', self.data[:1])[0])
         return 'mov %s, %s' % (self.destination, imm)
 
     def get_direction(self):
@@ -1460,8 +1460,7 @@ class MovMem8Imm8Instruction(RegToRegMemBaseInstruction):
 
 class MovMem16Imm16Instruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        offset = 1 + len(self.modreg)
-        imm = Immediate16(struct.unpack('<H', self.data[offset:offset + 2])[0])
+        imm = Immediate16(struct.unpack('<H', self.data[:2])[0])
         return 'mov %s, %s' % (self.destination, imm)
 
     def get_direction(self):
