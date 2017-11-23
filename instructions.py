@@ -19,7 +19,7 @@ class Immediate16:
         self.immediate16 = immediate16
 
     def __str__(self):
-        if self.immediate16 < 16:
+        if -16 < self.immediate16 < 16:
             return '%d' % self.immediate16
         elif self.immediate16 < 256:
             return '%02Xh' % self.immediate16
@@ -31,6 +31,8 @@ class Immediate16:
 
 class Register:
     def __init__(self, register, word):
+        if register > 7:
+            raise Exception('Unknown register %d' % register)
         self.register = register
         self.word = word
 
@@ -51,8 +53,6 @@ class Register:
             return 'si' if self.word else 'dh'
         elif self.register == 7:
             return 'di' if self.word else 'bh'
-        print('Unknown register %d' % self.register)
-        raise Exception
 
 
 class SegmentRegister:
@@ -215,16 +215,22 @@ class AddAxInstruction:
 
 
 class PushESInstruction:
+    def __init__(self):
+        self.segment = SegmentRegister(0)
+
     def __str__(self):
-        return 'push es'
+        return 'push %s' % self.segment
 
     def __len__(self):
         return 1
 
 
 class PopESInstruction:
+    def __init__(self):
+        self.segment = SegmentRegister(0)
+
     def __str__(self):
-        return 'pop es'
+        return 'pop %s' % self.segment
 
     def __len__(self):
         return 1
@@ -258,8 +264,11 @@ class OrAxImm16Instruction:
 
 
 class PushCSInstruction:
+    def __init__(self):
+        self.segment = SegmentRegister(1)
+
     def __str__(self):
-        return 'push cs'
+        return 'push %s' % self.segment
 
     def __len__(self):
         return 1
@@ -272,10 +281,10 @@ class AdcInstruction(RegToRegMemBaseInstruction):
 
 class AdcAlImm8Instruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'adc al, %02Xh' % self.immediate8
+        return 'adc al, %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -283,26 +292,32 @@ class AdcAlImm8Instruction:
 
 class AdcAxImm16Instruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'adc ax, %04Xh' % self.immediate16
+        return 'adc ax, %s' % self.immediate16
 
     def __len__(self):
         return 3
 
 
 class PushSSInstruction:
+    def __init__(self):
+        self.segment = SegmentRegister(2)
+
     def __str__(self):
-        return 'push ss'
+        return 'push %s' % self.segment
 
     def __len__(self):
         return 1
 
 
 class PopSSInstruction:
+    def __init__(self):
+        self.segment = SegmentRegister(2)
+
     def __str__(self):
-        return 'pop ss'
+        return 'pop %s' % self.segment
 
     def __len__(self):
         return 1
@@ -315,10 +330,10 @@ class SBBInstruction(RegToRegMemBaseInstruction):
 
 class SBBAlImm8Instruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'sbb al, %02Xh' % self.immediate8
+        return 'sbb al, %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -326,26 +341,32 @@ class SBBAlImm8Instruction:
 
 class SBBAxImm16Instruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'sbb ax, %04Xh' % self.immediate16
+        return 'sbb ax, %s' % self.immediate16
 
     def __len__(self):
         return 3
 
 
 class PushDSInstruction:
+    def __init__(self):
+        self.segment = SegmentRegister(3)
+
     def __str__(self):
-        return 'push ds'
+        return 'push %s' % self.segment
 
     def __len__(self):
         return 1
 
 
 class PopDSInstruction:
+    def __init__(self):
+        self.segment = SegmentRegister(3)
+
     def __str__(self):
-        return 'pop ds'
+        return 'pop %s' % self.segment
 
     def __len__(self):
         return 1
@@ -358,10 +379,10 @@ class AndInstruction(RegToRegMemBaseInstruction):
 
 class AndALImm8Instruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'and al, %02Xh' % self.immediate8
+        return 'and al, %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -369,10 +390,10 @@ class AndALImm8Instruction:
 
 class AndAXImm16Instruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'and ax, %04Xh' % self.immediate16
+        return 'and ax, %s' % self.immediate16
 
     def __len__(self):
         return 3
@@ -405,10 +426,10 @@ class SubInstruction(RegToRegMemBaseInstruction):
 
 class SubAlImm8Instruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'sub al, %02Xh' % self.immediate8
+        return 'sub al, %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -416,10 +437,10 @@ class SubAlImm8Instruction:
 
 class SubAxImm16Instruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'sub ax, %04Xh' % self.immediate16
+        return 'sub ax, %s' % self.immediate16
 
     def __len__(self):
         return 3
@@ -461,10 +482,10 @@ class CmpInstruction(RegToRegMemBaseInstruction):
 
 class CmpAlImm8Instruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'cmp al, %02Xh' % self.immediate8
+        return 'cmp al, %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -472,10 +493,10 @@ class CmpAlImm8Instruction:
 
 class CmpAxImm16Instruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'cmp ax, %04Xh' % self.immediate16
+        return 'cmp ax, %s' % self.immediate16
 
     def __len__(self):
         return 3
@@ -495,10 +516,10 @@ class DSSegmentOverride:
 
 class IncAXInstruction:
     def __init__(self):
-        pass
+        self.register = Register(0, True)
 
     def __str__(self):
-        return 'inc ax'
+        return 'inc %s' % self.register
 
     def __len__(self):
         return 1
@@ -506,10 +527,10 @@ class IncAXInstruction:
 
 class IncCXInstruction:
     def __init__(self):
-        pass
+        self.register = Register(1, True)
 
     def __str__(self):
-        return 'inc cx'
+        return 'inc %s' % self.register
 
     def __len__(self):
         return 1
@@ -517,10 +538,10 @@ class IncCXInstruction:
 
 class IncDXInstruction:
     def __init__(self):
-        pass
+        self.register = Register(2, True)
 
     def __str__(self):
-        return 'inc cx'
+        return 'inc %s' % self.register
 
     def __len__(self):
         return 1
@@ -528,21 +549,10 @@ class IncDXInstruction:
 
 class IncBXInstruction:
     def __init__(self):
-        pass
+        self.register = Register(3, True)
 
     def __str__(self):
-        return 'inc bx'
-
-    def __len__(self):
-        return 1
-
-
-class IncSIInstruction:
-    def __init__(self):
-        pass
-
-    def __str__(self):
-        return 'inc si'
+        return 'inc %s' % self.register
 
     def __len__(self):
         return 1
@@ -550,10 +560,10 @@ class IncSIInstruction:
 
 class IncSPInstruction:
     def __init__(self):
-        pass
+        self.register = Register(4, True)
 
     def __str__(self):
-        return 'inc sp'
+        return 'inc %s' % self.register
 
     def __len__(self):
         return 1
@@ -561,10 +571,21 @@ class IncSPInstruction:
 
 class IncBPInstruction:
     def __init__(self):
-        pass
+        self.register = Register(5, True)
 
     def __str__(self):
-        return 'inc bp'
+        return 'inc %s' % self.register
+
+    def __len__(self):
+        return 1
+
+
+class IncSIInstruction:
+    def __init__(self):
+        self.register = Register(6, True)
+
+    def __str__(self):
+        return 'inc %s' % self.register
 
     def __len__(self):
         return 1
@@ -572,10 +593,10 @@ class IncBPInstruction:
 
 class IncDIInstruction:
     def __init__(self):
-        pass
+        self.register = Register(7, True)
 
     def __str__(self):
-        return 'inc di'
+        return 'inc %s' % self.register
 
     def __len__(self):
         return 1
@@ -583,10 +604,10 @@ class IncDIInstruction:
 
 class DecAXInstruction:
     def __init__(self):
-        pass
+        self.register = Register(0, True)
 
     def __str__(self):
-        return 'dec ax'
+        return 'dec %s' % self.register
 
     def __len__(self):
         return 1
@@ -594,10 +615,10 @@ class DecAXInstruction:
 
 class DecCXInstruction:
     def __init__(self):
-        pass
+        self.register = Register(1, True)
 
     def __str__(self):
-        return 'dec cx'
+        return 'dec %s' % self.register
 
     def __len__(self):
         return 1
@@ -605,10 +626,10 @@ class DecCXInstruction:
 
 class DecDXInstruction:
     def __init__(self):
-        pass
+        self.register = Register(2, True)
 
     def __str__(self):
-        return 'dec dx'
+        return 'dec %s' % self.register
 
     def __len__(self):
         return 1
@@ -616,10 +637,10 @@ class DecDXInstruction:
 
 class DecBXInstruction:
     def __init__(self):
-        pass
+        self.register = Register(3, True)
 
     def __str__(self):
-        return 'dec bx'
+        return 'dec %s' % self.register
 
     def __len__(self):
         return 1
@@ -627,10 +648,10 @@ class DecBXInstruction:
 
 class DecSPInstruction:
     def __init__(self):
-        pass
+        self.register = Register(4, True)
 
     def __str__(self):
-        return 'dec sp'
+        return 'dec %s' % self.register
 
     def __len__(self):
         return 1
@@ -638,10 +659,10 @@ class DecSPInstruction:
 
 class DecBPInstruction:
     def __init__(self):
-        pass
+        self.register = Register(5, True)
 
     def __str__(self):
-        return 'dec bp'
+        return 'dec %s' % self.register
 
     def __len__(self):
         return 1
@@ -649,10 +670,10 @@ class DecBPInstruction:
 
 class DecSIInstruction:
     def __init__(self):
-        pass
+        self.register = Register(6, True)
 
     def __str__(self):
-        return 'dec si'
+        return 'dec %s' % self.register
 
     def __len__(self):
         return 1
@@ -660,10 +681,10 @@ class DecSIInstruction:
 
 class DecDIInstruction:
     def __init__(self):
-        pass
+        self.register = Register(7, True)
 
     def __str__(self):
-        return 'dec di'
+        return 'dec %s' % self.register
 
     def __len__(self):
         return 1
@@ -693,10 +714,10 @@ class PopInstruction:
 
 class JoInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jo %02Xh' % self.offset
+        return 'jo %s' % self.offset
 
     def __len__(self):
         return 2
@@ -704,10 +725,10 @@ class JoInstruction:
 
 class JnoInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jno %02Xh' % self.offset
+        return 'jno %s' % self.offset
 
     def __len__(self):
         return 2
@@ -715,10 +736,10 @@ class JnoInstruction:
 
 class JbInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jb %02Xh' % self.offset
+        return 'jb %s' % self.offset
 
     def __len__(self):
         return 2
@@ -726,10 +747,10 @@ class JbInstruction:
 
 class JnbInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jnb %02Xh' % self.offset
+        return 'jnb %s' % self.offset
 
     def __len__(self):
         return 2
@@ -737,10 +758,10 @@ class JnbInstruction:
 
 class JzInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jz %02Xh' % self.offset
+        return 'jz %s' % self.offset
 
     def __len__(self):
         return 2
@@ -748,10 +769,10 @@ class JzInstruction:
 
 class JnzInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jnz %02Xh' % self.offset
+        return 'jnz %s' % self.offset
 
     def __len__(self):
         return 2
@@ -759,10 +780,10 @@ class JnzInstruction:
 
 class JbeInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jbe %02Xh' % self.offset
+        return 'jbe %s' % self.offset
 
     def __len__(self):
         return 2
@@ -770,10 +791,10 @@ class JbeInstruction:
 
 class JaInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'ja %02Xh' % self.offset
+        return 'ja %s' % self.offset
 
     def __len__(self):
         return 2
@@ -781,10 +802,10 @@ class JaInstruction:
 
 class JsInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'js %02Xh' % self.offset
+        return 'js %s' % self.offset
 
     def __len__(self):
         return 2
@@ -792,10 +813,10 @@ class JsInstruction:
 
 class JnsInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jns %02Xh' % self.offset
+        return 'jns %s' % self.offset
 
     def __len__(self):
         return 2
@@ -803,10 +824,10 @@ class JnsInstruction:
 
 class JpeInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jpe %02Xh' % self.offset
+        return 'jpe %s' % self.offset
 
     def __len__(self):
         return 2
@@ -814,10 +835,10 @@ class JpeInstruction:
 
 class JpoInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jpo %02Xh' % self.offset
+        return 'jpo %s' % self.offset
 
     def __len__(self):
         return 2
@@ -825,10 +846,10 @@ class JpoInstruction:
 
 class JlInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jl %02Xh' % self.offset
+        return 'jl %s' % self.offset
 
     def __len__(self):
         return 2
@@ -836,10 +857,10 @@ class JlInstruction:
 
 class JgeInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jge %02Xh' % self.offset
+        return 'jge %s' % self.offset
 
     def __len__(self):
         return 2
@@ -847,10 +868,10 @@ class JgeInstruction:
 
 class JleInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jle %02Xh' % self.offset
+        return 'jle %s' % self.offset
 
     def __len__(self):
         return 2
@@ -858,10 +879,10 @@ class JleInstruction:
 
 class JgInstruction:
     def __init__(self, data):
-        self.offset = struct.unpack('B', data)[0]
+        self.offset = Immediate8(struct.unpack('B', data)[0])
 
     def __str__(self):
-        return 'jg %02Xh' % self.offset
+        return 'jg %s' % self.offset
 
     def __len__(self):
         return 2
@@ -965,10 +986,11 @@ class NopInstruction:
 
 class XchgAxCxInstruction:
     def __init__(self):
-        pass
+        self.dest = Register(0, True)
+        self.source = Register(1, True)
 
     def __str__(self):
-        return 'xchg ax,cx'
+        return 'xchg %s, %s' % (self.dest, self.source)
 
     def __len__(self):
         return 1
@@ -976,10 +998,11 @@ class XchgAxCxInstruction:
 
 class XchgAxDxInstruction:
     def __init__(self):
-        pass
+        self.dest = Register(0, True)
+        self.source = Register(2, True)
 
     def __str__(self):
-        return 'xchg ax,dx'
+        return 'xchg %s, %s' % (self.dest, self.source)
 
     def __len__(self):
         return 1
@@ -987,10 +1010,11 @@ class XchgAxDxInstruction:
 
 class XchgAxBxInstruction:
     def __init__(self):
-        pass
+        self.dest = Register(0, True)
+        self.source = Register(3, True)
 
     def __str__(self):
-        return 'xchg ax,bx'
+        return 'xchg %s, %s' % (self.dest, self.source)
 
     def __len__(self):
         return 1
@@ -998,10 +1022,12 @@ class XchgAxBxInstruction:
 
 class XchgAxSpInstruction:
     def __init__(self):
-        pass
+        self.dest = Register(0, True)
+        self.source = Register(4, True)
 
     def __str__(self):
-        return 'xchg ax,sp'
+        return 'xchg %s, %s' % (self.dest, self.source)
+
 
     def __len__(self):
         return 1
@@ -1009,10 +1035,12 @@ class XchgAxSpInstruction:
 
 class XchgAxBpInstruction:
     def __init__(self):
-        pass
+        self.dest = Register(0, True)
+        self.source = Register(5, True)
 
     def __str__(self):
-        return 'xchg ax,bp'
+        return 'xchg %s, %s' % (self.dest, self.source)
+
 
     def __len__(self):
         return 1
@@ -1020,10 +1048,12 @@ class XchgAxBpInstruction:
 
 class XchgAxSiInstruction:
     def __init__(self):
-        pass
+        self.dest = Register(0, True)
+        self.source = Register(6, True)
 
     def __str__(self):
-        return 'xchg ax,si'
+        return 'xchg %s, %s' % (self.dest, self.source)
+
 
     def __len__(self):
         return 1
@@ -1031,10 +1061,12 @@ class XchgAxSiInstruction:
 
 class XchgAxDiInstruction:
     def __init__(self):
-        pass
+        self.dest = Register(0, True)
+        self.source = Register(7, True)
 
     def __str__(self):
-        return 'xchg ax,di'
+        return 'xchg %s, %s' % (self.dest, self.source)
+
 
     def __len__(self):
         return 1
@@ -1127,10 +1159,10 @@ class MoveAxMem16Instruction:
 
 class MoveMem8AlInstruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'mov %04Xh, al' % self.immediate8
+        return 'mov %s, al' % self.immediate8
 
     def __len__(self):
         return 3
@@ -1138,10 +1170,10 @@ class MoveMem8AlInstruction:
 
 class MoveMem16AxInstruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate16 = Immediate8(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'mov %04Xh, ax' % self.immediate16
+        return 'mov %s, ax' % self.immediate16
 
     def __len__(self):
         return 3
@@ -1206,10 +1238,10 @@ class LodsInstruction:
 
 class MoveAlInstruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'mov al, %02Xh' % self.immediate8
+        return 'mov al, %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -1228,10 +1260,10 @@ class MoveCLInstruction:
 
 class MoveDLInstruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'mov dl, %02Xh' % self.immediate8
+        return 'mov dl, %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -1239,10 +1271,10 @@ class MoveDLInstruction:
 
 class MoveBLInstruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'mov bl, %02Xh' % self.immediate8
+        return 'mov bl, %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -1250,10 +1282,10 @@ class MoveBLInstruction:
 
 class MoveAhInstruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'mov ah, %02Xh' % self.immediate8
+        return 'mov ah, %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -1261,10 +1293,10 @@ class MoveAhInstruction:
 
 class MoveChInstruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'mov ch, %02Xh' % self.immediate8
+        return 'mov ch, %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -1272,10 +1304,10 @@ class MoveChInstruction:
 
 class MoveDhInstruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'mov dh, %02Xh' % self.immediate8
+        return 'mov dh, %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -1283,10 +1315,10 @@ class MoveDhInstruction:
 
 class MoveBhInstruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'mov bh, %02Xh' % self.immediate8
+        return 'mov bh, %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -1294,10 +1326,10 @@ class MoveBhInstruction:
 
 class MoveAXInstruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'mov ax, %xh' % self.immediate16
+        return 'mov ax, %s' % self.immediate16
 
     def __len__(self):
         return 3
@@ -1305,10 +1337,10 @@ class MoveAXInstruction:
 
 class MoveCXInstruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'mov cx, %xh' % self.immediate16
+        return 'mov cx, %s' % self.immediate16
 
     def __len__(self):
         return 3
@@ -1316,10 +1348,10 @@ class MoveCXInstruction:
 
 class MoveDXInstruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'mov dx, %xh' % self.immediate16
+        return 'mov dx, %s' % self.immediate16
 
     def __len__(self):
         return 3
@@ -1327,10 +1359,10 @@ class MoveDXInstruction:
 
 class MoveBXInstruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'mov bx, %xh' % self.immediate16
+        return 'mov bx, %s' % self.immediate16
 
     def __len__(self):
         return 3
@@ -1371,10 +1403,10 @@ class MoveSIInstruction:
 
 class MoveDIInstruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'mov di, %Xh' % self.immediate16
+        return 'mov di, %s' % self.immediate16
 
     def __len__(self):
         return 3
@@ -1415,7 +1447,7 @@ class LdsInstruction(RegToRegMemBaseInstruction):
 
 class MovMem8Imm8Instruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        offset = 1+len(self.modreg)
+        offset = 1 + len(self.modreg)
         imm = Immediate8(struct.unpack('<B', self.data[offset:offset+1])[0])
         return 'mov %s, %s' % (self.source, imm)
 
@@ -1428,7 +1460,7 @@ class MovMem8Imm8Instruction(RegToRegMemBaseInstruction):
 
 class MovMem16Imm16Instruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        offset = 1+len(self.modreg)
+        offset = 1 + len(self.modreg)
         imm = Immediate16(struct.unpack('<H', self.data[offset:offset + 2])[0])
         return 'mov %s, %s' % (self.source, imm)
 
@@ -1441,10 +1473,10 @@ class MovMem16Imm16Instruction(RegToRegMemBaseInstruction):
 
 class ReturnImm16Instruction:
     def __init__(self, data):
-        self.immediate16 = struct.unpack('<H', data)[0]
+        self.immediate16 = Immediate16(struct.unpack('<H', data)[0])
 
     def __str__(self):
-        return 'ret %d' % self.immediate16
+        return 'ret %s' % self.immediate16
 
     def __len__(self):
         return 3
@@ -1463,10 +1495,10 @@ class ReturnInstruction:
 
 class InterruptInstruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'int %02Xh' % self.immediate8
+        return 'int %s' % self.immediate8
 
     def __len__(self):
         return 2
@@ -1506,10 +1538,10 @@ class ShiftInstruction(RegToRegMemBaseInstruction):
 
 class LoopInstruction:
     def __init__(self, data):
-        self.immediate8 = struct.unpack('<B', data)[0]
+        self.immediate8 = Immediate8(struct.unpack('<B', data)[0])
 
     def __str__(self):
-        return 'loop %02Xh' % self.immediate8
+        return 'loop %s' % self.immediate8
 
     def __len__(self):
         return 2
