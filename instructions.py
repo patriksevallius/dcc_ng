@@ -441,19 +441,26 @@ class RegToRegMemBaseInstruction:
         self.word = self.get_size()
         self.modreg = ModReg2(data[1], self.word, data[2:])
 
-        register = Register(self.modreg.reg, self.word)
-        if self.direction == 0:
-            self.source = self.modreg
-            self.dest = register
-        else:
-            self.source = register
-            self.dest = self.modreg
+        self.source = self.get_source()
+        self.dest = self.get_destination()
 
     def get_size(self):
         return self.data[0] & 0x01 == 0x01
 
     def get_direction(self):
         return self.data[0] & 0x02 == 0x02
+
+    def get_source(self):
+        if self.direction == 0:
+            return self.modreg
+        else:
+            return Register(self.modreg.reg, self.word)
+
+    def get_destination(self):
+        if self.direction == 0:
+            return Register(self.modreg.reg, self.word)
+        else:
+            return self.modreg
 
     def __len__(self):
         return 1 + len(self.modreg)
@@ -1737,42 +1744,32 @@ class InterruptInstruction:
         return 2
 
 
-class ShiftInstruction:
-    def __init__(self, data):
-        self.data = data
-        self.modreg = ModReg(data[1], data[0] & 0x02, data[0] & 0x01, data[2:])
+class ShiftInstruction(RegToRegMemBaseInstruction):
+    def get_source(self):
+        return self.modreg
+
+    def get_destination(self):
+        if self.direction == 0:
+            return Immediate8(1)
+        elif self.direction == 1:
+            return Register(1, 0)
 
     def __str__(self):
-        if self.modreg.direction == 0:
-            if self.modreg.reg == 0:
-                return 'rol %s, 1' % Register(self.modreg.rm, self.modreg.word)
-            elif self.modreg.reg == 1:
-                return 'ror %s, 1' % Register(self.modreg.rm, self.modreg.word)
-            elif self.modreg.reg == 2:
-                return 'rcl %s, 1' % Register(self.modreg.rm, self.modreg.word)
-            elif self.modreg.reg == 3:
-                return 'rcr %s, 1' % Register(self.modreg.rm, self.modreg.word)
-            elif self.modreg.reg == 4:
-                return 'shl %s, 1' % Register(self.modreg.rm, self.modreg.word)
-            elif self.modreg.reg == 5:
-                return 'shr %s, 1' % Register(self.modreg.rm, self.modreg.word)
-            elif self.modreg.reg == 7:
-                return 'sar %s, 1' % Register(self.modreg.rm, self.modreg.word)
-        elif self.modreg.direction == 2:
-            if self.modreg.reg == 0:
-                return 'rol %s, cl' % Register(self.modreg.rm, self.modreg.word)
-            elif self.modreg.reg == 1:
-                return 'ror %s, cl' % Register(self.modreg.rm, self.modreg.word)
-            elif self.modreg.reg == 2:
-                return 'rcl %s, cl' % Register(self.modreg.rm, self.modreg.word)
-            elif self.modreg.reg == 3:
-                return 'rcr %s, cl' % Register(self.modreg.rm, self.modreg.word)
-            elif self.modreg.reg == 4:
-                return 'shl %s, cl' % Register(self.modreg.rm, self.modreg.word)
-            elif self.modreg.reg == 5:
-                return 'shr %s, cl' % Register(self.modreg.rm, self.modreg.word)
-            elif self.modreg.reg == 7:
-                return 'sar %s, cl' % Register(self.modreg.rm, self.modreg.word)
+        if self.modreg.reg == 0:
+            return 'rol %s, %s' % (self.source, self.dest)
+        elif self.modreg.reg == 1:
+            return 'ror %s, %s' % (self.source, self.dest)
+        elif self.modreg.reg == 2:
+            return 'rcl %s, %s' % (self.source, self.dest)
+        elif self.modreg.reg == 3:
+            return 'rcr %s, %s' % (self.source, self.dest)
+        elif self.modreg.reg == 4:
+            return 'shl %s, %s' % (self.source, self.dest)
+        elif self.modreg.reg == 5:
+            return 'shr %s, %s' % (self.source, self.dest)
+        elif self.modreg.reg == 7:
+            return 'sar %s, %s' % (self.source, self.dest)
+
         raise Exception('Unimplemented shift instruction', self.modreg)
 
     def __len__(self):
