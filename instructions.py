@@ -162,8 +162,8 @@ class RegToRegMemBaseInstruction:
         self.word = self.get_size()
         self.modreg = ModReg(data[1], self.word, data[2:])
 
+        self.destination = self.get_destination()
         self.source = self.get_source()
-        self.dest = self.get_destination()
 
     def get_size(self):
         return self.data[0] & 0x01 == 0x01
@@ -171,17 +171,17 @@ class RegToRegMemBaseInstruction:
     def get_direction(self):
         return self.data[0] & 0x02 == 0x02
 
-    def get_source(self):
-        if self.direction == 0:
-            return self.modreg
-        else:
-            return Register(self.modreg.reg, self.word)
-
     def get_destination(self):
-        if self.direction == 0:
+        if self.direction:
             return Register(self.modreg.reg, self.word)
         else:
             return self.modreg
+
+    def get_source(self):
+        if self.direction:
+            return self.modreg
+        else:
+            return Register(self.modreg.reg, self.word)
 
     def __len__(self):
         return 1 + len(self.modreg)
@@ -189,7 +189,7 @@ class RegToRegMemBaseInstruction:
 
 class AddInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'add %s, %s' % (self.source, self.dest)
+        return 'add %s, %s' % (self.destination, self.source)
 
 
 class AddAlInstruction:
@@ -238,7 +238,7 @@ class PopESInstruction:
 
 class OrInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'or %s, %s' % (self.source, self.dest)
+        return 'or %s, %s' % (self.destination, self.source)
 
 
 class OrAlImm8Instruction:
@@ -276,7 +276,7 @@ class PushCSInstruction:
 
 class AdcInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'adc %s, %s' % (self.source, self.dest)
+        return 'adc %s, %s' % (self.destination, self.source)
 
 
 class AdcAlImm8Instruction:
@@ -325,7 +325,7 @@ class PopSSInstruction:
 
 class SBBInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'sbb %s, %s' % (self.source, self.dest)
+        return 'sbb %s, %s' % (self.destination, self.source)
 
 
 class SBBAlImm8Instruction:
@@ -374,7 +374,7 @@ class PopDSInstruction:
 
 class AndInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'and %s, %s' % (self.source, self.dest)
+        return 'and %s, %s' % (self.destination, self.source)
 
 
 class AndALImm8Instruction:
@@ -421,7 +421,7 @@ class DAAInstruction:
 
 class SubInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'sub %s, %s' % (self.source, self.dest)
+        return 'sub %s, %s' % (self.destination, self.source)
 
 
 class SubAlImm8Instruction:
@@ -460,7 +460,7 @@ class CSSegmentOverride:
 
 class XorInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'xor %s, %s' % (self.source, self.dest)
+        return 'xor %s, %s' % (self.destination, self.source)
 
 
 class SSSegmentOverride:
@@ -477,7 +477,7 @@ class SSSegmentOverride:
 
 class CmpInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'cmp %s, %s' % (self.source, self.dest)
+        return 'cmp %s, %s' % (self.destination, self.source)
 
 
 class CmpAlImm8Instruction:
@@ -933,7 +933,7 @@ class IntermediateInstruction:
 
 class TestInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'test %s, %s' % (self.source, self.dest)
+        return 'test %s, %s' % (self.destination, self.source)
 
 
 class XchgInstruction(RegToRegMemBaseInstruction):
@@ -941,36 +941,36 @@ class XchgInstruction(RegToRegMemBaseInstruction):
         return False
 
     def __str__(self):
-        return 'xchg %s, %s' % (self.source, self.dest)
+        return 'xchg %s, %s' % (self.destination, self.source)
 
 
 class MovInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'mov %s, %s' % (self.source, self.dest)
+        return 'mov %s, %s' % (self.destination, self.source)
 
 
 class MoveSegRegInstruction(RegToRegMemBaseInstruction):
     def get_size(self):
         return True
 
-    def get_source(self):
+    def get_destination(self):
         if self.direction:
             return SegmentRegister(self.modreg.reg)
         else:
             return self.modreg
 
-    def get_destination(self):
+    def get_source(self):
         if self.direction:
             return self.modreg
         else:
             return SegmentRegister(self.modreg.reg)
 
     def __str__(self):
-        return 'mov %s, %s' % (self.source, self.dest)
+        return 'mov %s, %s' % (self.destination, self.source)
 
 class LoadEffectiveAddressInstruction(RegToRegMemBaseInstruction):
     def __str__(self):
-        return 'lea %s, %s' % (self.source, self.dest)
+        return 'lea %s, %s' % (self.destination, self.source)
 
 
 class NopInstruction:
@@ -1431,7 +1431,7 @@ class LesInstruction(RegToRegMemBaseInstruction):
         return True
 
     def __str__(self):
-        return 'les %s, %s' % (self.source, self.dest)
+        return 'les %s, %s' % (self.destination, self.source)
 
 
 class LdsInstruction(RegToRegMemBaseInstruction):
@@ -1442,14 +1442,14 @@ class LdsInstruction(RegToRegMemBaseInstruction):
         return True
 
     def __str__(self):
-        return 'lds %s, %s' % (self.source, self.dest)
+        return 'lds %s, %s' % (self.destination, self.source)
 
 
 class MovMem8Imm8Instruction(RegToRegMemBaseInstruction):
     def __str__(self):
         offset = 1 + len(self.modreg)
         imm = Immediate8(struct.unpack('B', self.data[offset:offset+1])[0])
-        return 'mov %s, %s' % (self.source, imm)
+        return 'mov %s, %s' % (self.destination, imm)
 
     def get_direction(self):
         return False
@@ -1462,7 +1462,7 @@ class MovMem16Imm16Instruction(RegToRegMemBaseInstruction):
     def __str__(self):
         offset = 1 + len(self.modreg)
         imm = Immediate16(struct.unpack('<H', self.data[offset:offset + 2])[0])
-        return 'mov %s, %s' % (self.source, imm)
+        return 'mov %s, %s' % (self.destination, imm)
 
     def get_direction(self):
         return False
@@ -1505,30 +1505,30 @@ class InterruptInstruction:
 
 
 class ShiftInstruction(RegToRegMemBaseInstruction):
-    def get_source(self):
+    def get_destination(self):
         return self.modreg
 
-    def get_destination(self):
-        if self.direction == 0:
-            return Immediate8(1)
-        elif self.direction == 1:
+    def get_source(self):
+        if self.direction:
             return Register(1, 0)
+        else:
+            return Immediate8(1)
 
     def __str__(self):
         if self.modreg.reg == 0:
-            return 'rol %s, %s' % (self.source, self.dest)
+            return 'rol %s, %s' % (self.destination, self.source)
         elif self.modreg.reg == 1:
-            return 'ror %s, %s' % (self.source, self.dest)
+            return 'ror %s, %s' % (self.destination, self.source)
         elif self.modreg.reg == 2:
-            return 'rcl %s, %s' % (self.source, self.dest)
+            return 'rcl %s, %s' % (self.destination, self.source)
         elif self.modreg.reg == 3:
-            return 'rcr %s, %s' % (self.source, self.dest)
+            return 'rcr %s, %s' % (self.destination, self.source)
         elif self.modreg.reg == 4:
-            return 'shl %s, %s' % (self.source, self.dest)
+            return 'shl %s, %s' % (self.destination, self.source)
         elif self.modreg.reg == 5:
-            return 'shr %s, %s' % (self.source, self.dest)
+            return 'shr %s, %s' % (self.destination, self.source)
         elif self.modreg.reg == 7:
-            return 'sar %s, %s' % (self.source, self.dest)
+            return 'sar %s, %s' % (self.destination, self.source)
 
         raise Exception('Unimplemented shift instruction', self.modreg)
 
